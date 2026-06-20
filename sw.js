@@ -12,7 +12,8 @@ self.addEventListener('activate', e => {
 });
 
 self.addEventListener('fetch', e => {
-  if (e.request.mode === 'navigate') {
+  const url = e.request.url;
+  if (e.request.mode === 'navigate' || url.includes('api.') || url.includes('openstreetmap') || url.includes('open-meteo') || url.includes('wttr') || url.includes('wikipedia')) {
     e.respondWith(fetch(e.request).catch(() => caches.match(e.request)));
     return;
   }
