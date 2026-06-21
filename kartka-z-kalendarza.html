@@ -181,7 +181,7 @@
 <main class="page">
   <div class="date-nav">
     <a class="date-nav-btn" id="prevBtn" title="Poprzedni dzień">‹</a>
-    <input type="date" class="date-picker" id="datePicker" value="2026-06-16">
+    <input type="date" class="date-picker" id="datePicker">
     <a class="date-nav-btn" id="nextBtn" title="Następny dzień">›</a>
     <button class="date-nav-btn" onclick="goToday()" title="Dziś" style="width:auto;padding:0 .75rem;border-radius:60px;font-size:.78rem;font-weight:500">Dziś</button>
   </div>
@@ -420,7 +420,9 @@ if (urlDate) {
   document.getElementById('datePicker').value = urlDate;
   renderDay(urlDate);
 } else {
-  renderDay(document.getElementById('datePicker').value);
+  const today = new Date().toISOString().slice(0,10);
+  document.getElementById('datePicker').value = today;
+  renderDay(today);
 }
 </script>
 <script>document.getElementById('navMonth').textContent=new Date().toLocaleDateString('pl-PL',{month:'long',year:'numeric'});</script>
