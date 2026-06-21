@@ -236,6 +236,8 @@
     [data-theme="dark"] .month-tab { color: var(--muted); }
     [data-theme="dark"] .month-tab.active { background: var(--text); color: var(--bg); border-color: var(--text); }
     [data-theme="dark"] .filter-btn { color: var(--muted); }
+    [data-theme="dark"] a { color: inherit; }
+    [data-theme="dark"] a:hover { color: var(--text); }
     /* Accessibility: font scaling */
     [data-font="large"] { font-size: 112%; }
     [data-font="xl"] { font-size: 125%; }
@@ -2523,7 +2525,7 @@ function getMoonRiseSet(year,month,day,lat,lon){
   // Przysłowia
   const prov=PROVERBS_DAILY[`${d}-${m}`]||PROVERBS[m-1];
   const firstName=names[0]||'';
-  document.getElementById('proverbTitle').textContent=firstName?`Przysłowia na ${firstName.includes(' ')?firstName:'Świętego '+firstName}`:'Przysłowia';
+  document.getElementById('proverbTitle').textContent=firstName?`Przysłowia na dzień ${firstName}`:'Przysłowia';
   const pl=document.getElementById('proverbList');
   prov.forEach(p=>{
     const div=document.createElement('div');
