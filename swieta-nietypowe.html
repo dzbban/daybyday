@@ -431,7 +431,11 @@
       border-radius: 60px; font-size: .65rem; font-weight: 600;
       color: var(--gold); letter-spacing: .05em; text-transform: uppercase;
     }
-  </style>
+
+    body{animation:pageIn .28s ease both}
+    @keyframes pageIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+    body.page-out{animation:pageOut .22s ease forwards}
+    @keyframes pageOut{to{opacity:0;transform:translateY(-5px)}}  </style>
   <style>
     .nav-burger { display:none; flex-direction:column; justify-content:center; gap:5px; width:36px; height:36px; background:none; border:none; cursor:pointer; padding:6px; border-radius:8px; transition:background .15s; }
     .nav-burger:hover { background:var(--tag-bg); }
@@ -2170,7 +2174,8 @@ if (_q) {
     updateFontBtn();
   })();
 </script>
-</body>
+
+<script src="transitions.js"></script></body>
 </html>
 
 

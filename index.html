@@ -180,7 +180,11 @@
     .date-search label { font-size:.72rem; font-weight:600; letter-spacing:.09em; text-transform:uppercase; color:var(--muted); white-space:nowrap; }
     .date-search input[type=date] { flex:1; border:1px solid var(--border); border-radius:10px; padding:.4rem .75rem; font-size:.85rem; font-family:inherit; background:var(--bg); color:var(--text); cursor:pointer; }
     .date-search input[type=date]:focus { outline:2px solid var(--sun); outline-offset:1px; border-color:transparent; }
-  </style>
+
+    body{animation:pageIn .28s ease both}
+    @keyframes pageIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+    body.page-out{animation:pageOut .22s ease forwards}
+    @keyframes pageOut{to{opacity:0;transform:translateY(-5px)}}  </style>
   <style>
     .nav-burger { display:none; flex-direction:column; justify-content:center; gap:5px; width:36px; height:36px; background:none; border:none; cursor:pointer; padding:6px; border-radius:8px; transition:background .15s; }
     .nav-burger:hover { background:var(--tag-bg); }
@@ -3217,7 +3221,8 @@ document.querySelector('main').addEventListener('pointerdown', onPointerDown);
 // Apply saved order on load
 applyCardOrder();
 </script>
-</body>
+
+<script src="transitions.js"></script></body>
 </html>
 
 
