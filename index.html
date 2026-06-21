@@ -309,10 +309,12 @@
   <main>
     <!-- DATE HERO -->
     <div class="date-hero">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
-        <div class="date-label" style="margin-bottom:0;">Kartka z kalendarza</div>
-        <div style="display:flex;gap:0.5rem;align-items:center;">
-          <button onclick="toggleCardEdit()" id="editOrderBtn" title="Zmień kolejność sekcji" style="font:inherit;font-size:.8rem;color:var(--muted);background:none;border:1px solid var(--border);border-radius:8px;padding:.25rem .6rem;cursor:pointer;transition:background .15s;" onmouseover="this.style.background='var(--tag-bg)'" onmouseout="this.style.background=''">⚙</button>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;gap:.5rem;flex-wrap:wrap;">
+        <div style="display:flex;align-items:center;gap:.5rem;">
+          <div class="date-label" style="margin-bottom:0;">Kartka z kalendarza</div>
+          <button onclick="toggleCardEdit()" id="editOrderBtn" title="Zmień kolejność sekcji" style="font:inherit;font-size:.75rem;color:var(--muted);background:none;border:1px solid var(--border);border-radius:8px;padding:.2rem .5rem;cursor:pointer;transition:background .15s;line-height:1;" onmouseover="this.style.background='var(--tag-bg)'" onmouseout="this.style.background=''">⚙</button>
+        </div>
+        <div style="display:flex;gap:0.5rem;align-items:center;flex-shrink:0;">
           <button id="shareBtn" onclick="shareDay()" title="Udostępnij ten dzień" style="font:inherit;font-size:.8rem;color:var(--muted);background:none;border:1px solid var(--border);border-radius:8px;padding:.25rem .6rem;cursor:pointer;transition:background .15s;" onmouseover="this.style.background='var(--tag-bg)'" onmouseout="this.style.background=''">🔗</button>
           <a id="prevDayLink" href="#" style="font-size:0.8rem;color:var(--muted);text-decoration:none;padding:0.25rem 0.6rem;border-radius:8px;border:1px solid var(--border);transition:background 0.15s;" onmouseover="this.style.background='var(--tag-bg)'" onmouseout="this.style.background=''">←</a>
           <a id="todayLink" href="index.html" style="font-size:0.75rem;color:var(--muted);text-decoration:none;padding:0.25rem 0.6rem;border-radius:8px;border:1px solid var(--border);display:none;transition:background 0.15s;" onmouseover="this.style.background='var(--tag-bg)'" onmouseout="this.style.background=''">Dziś</a>
