@@ -2525,7 +2525,54 @@ function getMoonRiseSet(year,month,day,lat,lon){
   // Przysłowia
   const prov=PROVERBS_DAILY[`${d}-${m}`]||PROVERBS[m-1];
   const firstName=names[0]||'';
-  document.getElementById('proverbTitle').textContent=firstName?`Przysłowia na dzień ${firstName}`:'Przysłowia';
+  (function(){
+    // Słownik: imię → [rodzaj, dopełniacz]  f=żeński, m=męski
+    const GEN={
+      'Agata':['f','Agaty'],'Agnieszka':['f','Agnieszki'],'Albert':['m','Alberta'],
+      'Aleksander':['m','Aleksandra'],'Alicja':['f','Alicji'],'Ambroży':['m','Ambrożego'],
+      'Andrzej':['m','Andrzeja'],'Anna':['f','Anny'],'Antoni':['m','Antoniego'],
+      'Antonina':['f','Antoniny'],'Barbara':['f','Barbary'],'Barnaba':['m','Barnaby'],
+      'Bartłomiej':['m','Bartłomieja'],'Benedykt':['m','Benedykta'],'Bernard':['m','Bernarda'],
+      'Bogumił':['m','Bogumiła'],'Bożena':['f','Bożeny'],'Bruno':['m','Brunona'],
+      'Cecylia':['f','Cecylii'],'Cyprian':['m','Cypriana'],'Damian':['m','Damiana'],
+      'Dominik':['m','Dominika'],'Dorota':['f','Doroty'],'Elżbieta':['f','Elżbiety'],
+      'Filip':['m','Filipa'],'Franciszek':['m','Franciszka'],'Gabriel':['m','Gabriela'],
+      'Grzegorz':['m','Grzegorza'],'Helena':['f','Heleny'],'Henryk':['m','Henryka'],
+      'Hubert':['m','Huberta'],'Ignacy':['m','Ignacego'],'Irena':['f','Ireny'],
+      'Jadwiga':['f','Jadwigi'],'Jakub':['m','Jakuba'],'Jan':['m','Jana'],
+      'Józef':['m','Józefa'],'Julia':['f','Julii'],'Karol':['m','Karola'],
+      'Kamil':['m','Kamila'],'Katarzyna':['f','Katarzyny'],'Kazimierz':['m','Kazimierza'],
+      'Klara':['f','Klary'],'Klemens':['m','Klemensa'],'Krystyna':['f','Krystyny'],
+      'Krzysztof':['m','Krzysztofa'],'Lech':['m','Lecha'],'Leonard':['m','Leonarda'],
+      'Ludwik':['m','Ludwika'],'Łucja':['f','Łucji'],'Łukasz':['m','Łukasza'],
+      'Maciej':['m','Macieja'],'Magdalena':['f','Magdaleny'],'Małgorzata':['f','Małgorzaty'],
+      'Marceli':['m','Marcelego'],'Marcin':['m','Marcina'],'Marek':['m','Marka'],
+      'Maria':['f','Marii'],'Michał':['m','Michała'],'Mikołaj':['m','Mikołaja'],
+      'Monika':['f','Moniki'],'Natalia':['f','Natalii'],'Paweł':['m','Pawła'],
+      'Piotr':['m','Piotra'],'Rafał':['m','Rafała'],'Robert':['m','Roberta'],
+      'Sebastian':['m','Sebastiana'],'Stefan':['m','Stefana'],'Stanisław':['m','Stanisława'],
+      'Szymon':['m','Szymona'],'Tadeusz':['m','Tadeusza'],'Teresa':['f','Teresy'],
+      'Tomasz':['m','Tomasza'],'Urban':['m','Urbana'],'Urszula':['f','Urszuli'],
+      'Walenty':['m','Walentego'],'Wanda':['f','Wandy'],'Wawrzyniec':['m','Wawrzyńca'],
+      'Weronika':['f','Weroniki'],'Wincenty':['m','Wincentego'],'Wit':['m','Wita'],
+      'Władysław':['m','Władysława'],'Władysława':['f','Władysławy'],'Wojciech':['m','Wojciecha'],
+      'Zofia':['f','Zofii'],'Zygmunt':['m','Zygmunta']
+    };
+    function nameToProverb(name){
+      if(!name) return 'Przysłowia';
+      if(GEN[name]){
+        const [g,gen]=GEN[name];
+        return g==='f'?`Przysłowia na Świętej ${gen}`:`Przysłowia na Świętego ${gen}`;
+      }
+      // fallback heurystyczny
+      if(name.endsWith('a')||name.endsWith('ia')){
+        const gen=name.endsWith('ia')?name.slice(0,-1)+'i':name.slice(0,-1)+'y';
+        return `Przysłowia na Świętej ${gen}`;
+      }
+      return `Przysłowia na Świętego ${name}a`;
+    }
+    document.getElementById('proverbTitle').textContent=nameToProverb(firstName);
+  })();
   const pl=document.getElementById('proverbList');
   prov.forEach(p=>{
     const div=document.createElement('div');
