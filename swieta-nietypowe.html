@@ -346,8 +346,10 @@
     }
     .cal-cell:hover { background:#F8F6F3; }
     .cal-cell.other-month { opacity:.32; pointer-events:none; background:var(--bg); }
-    .cal-cell.today { background:var(--gold-light); }
-    .cal-cell.today .cal-num { color:var(--gold); font-weight:600; }
+    .cal-cell.today { background:#E8936A; }
+    .cal-cell.today .cal-num { color:#111110; font-weight:600; }
+    .cal-cell.today .cal-hol { color:#111110; }
+    .cal-cell.today .cal-hol-more { color:rgba(17,17,16,.6); }
     .cal-cell.today::after {
       content:''; position:absolute; inset:0;
       border-radius:0; border:2px solid var(--gold-border);
