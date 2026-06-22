@@ -3642,6 +3642,7 @@ function getMoonRiseSet(year,month,day,lat,lon){
   const EVENT_DESC={
     'Nowy Rok':'Pierwszy dzień roku — tradycja życzeń noworocznych i postanowień.',
     'Trzech Króli':'Święto Objawienia Pańskiego, upamiętniające przybycie Mędrców.',
+    'Tłusty Czwartek':'Ostatni czwartek przed Wielkim Postem — tradycja jedzenia pączków.',
     'Walentynki':'Dzień zakochanych obchodzony 14 lutego.',
     'Dzień Kobiet':'Dzień poświęcony uhonorowania kobiet i ich osiągnięć.',
     'Dzień Wiosny':'Astronomiczny początek wiosny — równonoc wiosenna.',
@@ -3656,8 +3657,11 @@ function getMoonRiseSet(year,month,day,lat,lon){
     'Boże Ciało':'Uroczystość Najświętszego Ciała i Krwi Chrystusa.',
     'Wniebowzięcie NMP':'Uroczystość Wniebowzięcia Najświętszej Marii Panny.',
     'Wszystkich Świętych':'Dzień pamięci o świętych i bliskich zmarłych.',
+    'Halloween':'Wieczór przed Dniem Wszystkich Świętych — zwyczaj przebierania się i zabawy.',
     'Dzień Zaduszny':'Dzień modlitwy za dusze w czyśćcu.',
     'Święto Niepodległości':'Rocznica odzyskania niepodległości przez Polskę w 1918 roku.',
+    'Andrzejki':'Wieczór wróżb i zabaw przed dniem świętego Andrzeja.',
+    'Mikołajki':'Dzień świętego Mikołaja — tradycja wręczania prezentów i słodyczy.',
     'Niepokalane Poczęcie NMP':'Uroczystość Niepokalanego Poczęcia Najświętszej Marii Panny.',
     'Wigilia':'Wieczór wigilijny — czas kolacji z rodziną i prezentów.',
     'Boże Narodzenie':'Pierwsze Święto Bożego Narodzenia — narodziny Jezusa.',
@@ -3679,7 +3683,7 @@ function getMoonRiseSet(year,month,day,lat,lon){
     const row=document.createElement('a');
     row.className='upcoming-item';
     row.href=slug?`swieto.html?id=${slug}`:`index.html?d=${d}&m=${m}&y=${y}`;
-    const EMOJI={'Nowy Rok':'🎆','Trzech Króli':'⭐','Walentynki':'❤️','Dzień Kobiet':'🌹','Dzień Wiosny':'🌱','Wielkanoc':'🐣','Poniedziałek Wielkanocny':'🐣','Święto Pracy':'⚒️','Święto Konstytucji 3 Maja':'🇵🇱','Dzień Matki':'💐','Zielone Świątki':'🕊️','Dzień Dziecka':'🎈','Boże Ciało':'✝️','Wniebowzięcie NMP':'🕊️','Wszystkich Świętych':'🕯️','Dzień Niepodległości':'🇵🇱','Święto Niepodległości':'🇵🇱','Niepokalane Poczęcie NMP':'✝️','Wigilia':'🎄','Boże Narodzenie':'🎄','Drugi dzień Bożego Narodzenia':'🎄','Sylwester':'🎆','Przesilenie letnie':'☀️','Przesilenie zimowe':'❄️','Dzień Ojca':'👨','Dzień Matki':'💐','Dzień Dziecka':'🎈','Dzień Kobiet':'🌷','Dzień Wiosny':'🌸'};
+    const EMOJI={'Nowy Rok':'🎆','Trzech Króli':'⭐','Tłusty Czwartek':'🍩','Walentynki':'❤️','Dzień Kobiet':'🌷','Dzień Wiosny':'🌸','Wielkanoc':'🐣','Poniedziałek Wielkanocny':'🐣','Święto Pracy':'⚒️','Święto Konstytucji 3 Maja':'🇵🇱','Dzień Matki':'💐','Zielone Świątki':'🕊️','Dzień Dziecka':'🎈','Boże Ciało':'✝️','Przesilenie letnie':'☀️','Wniebowzięcie NMP':'🕊️','Wszyscy Świętych':'🕯️','Wszystkich Świętych':'🕯️','Halloween':'🎃','Dzień Niepodległości':'🇵🇱','Święto Niepodległości':'🇵🇱','Andrzejki':'🔮','Mikołajki':'🎅','Niepokalane Poczęcie NMP':'✝️','Przesilenie zimowe':'❄️','Wigilia':'🎄','Boże Narodzenie':'🎄','Drugi dzień Bożego Narodzenia':'🎄','Sylwester':'🎆','Dzień Ojca':'👨'};
     const em=EMOJI[name]||'📅';
     row.innerHTML=`<span class="upcoming-name">${em} ${name}</span><span class="upcoming-meta">za ${diff} dni — ${d} ${MONTH_GEN[m]}</span>`;
     ul.appendChild(row);
