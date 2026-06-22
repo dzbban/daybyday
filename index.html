@@ -346,6 +346,13 @@
       <div class="names-list" id="namesList"></div>
     </div>
 
+    <!-- RANKING IMION -->
+    <div class="card" data-card-id="ranking-imion">
+      <div class="drag-handle" title="Przeciągnij aby zmienić kolejność">⠿</div>
+      <div class="card-title">Ranking imion</div>
+      <div id="rankingImionPreview"></div>
+    </div>
+
     <!-- ŚWIĘTA -->
     <div class="card" data-card-id="swieta">
       <div class="drag-handle" title="Przeciągnij aby zmienić kolejność">⠿</div>
@@ -3364,6 +3371,25 @@ function jumpToDate(val){
   }).catch(()=>{});
 })();
 
+// ── Ranking imion ─────────────────────────────────────────────
+(function(){
+  const TOP_F=[['Zofia',4414],['Zuzanna',3881],['Maja',3872],['Laura',3821],['Hanna',3452]];
+  const TOP_M=[['Nikodem',5771],['Antoni',5252],['Leon',5079],['Jan',5054],['Aleksander',4687]];
+  function row(name,cnt,i){
+    const medals=['🥇','🥈','🥉'];
+    return '<div style="display:flex;align-items:center;gap:.6rem;padding:.45rem 0;border-bottom:1px solid var(--border)">'
+      +'<span style="font-size:.85rem;width:1.4rem;text-align:center">'+(medals[i]||('<span style="font-size:.75rem;color:var(--muted)">'+(i+1)+'</span>'))+'</span>'
+      +'<span style="flex:1;font-size:.92rem;font-weight:500">'+name+'</span>'
+      +'<span style="font-size:.75rem;color:var(--muted)">'+cnt.toLocaleString('pl-PL')+'</span>'
+      +'</div>';
+  }
+  var html='<div style="font-size:.72rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:.3rem">👧 Żeńskie</div>'
+    +TOP_F.map(function(e,i){return row(e[0],e[1],i);}).join('')
+    +'<div style="font-size:.72rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:.75rem 0 .3rem">👦 Męskie</div>'
+    +TOP_M.map(function(e,i){return row(e[0],e[1],i);}).join('')
+    +'<a href="ranking-imion.html" style="display:block;margin-top:.85rem;text-align:center;font-size:.8rem;color:var(--muted);text-decoration:none;padding:.4rem;border:1px solid var(--border);border-radius:8px;transition:background .15s" onmouseover="this.style.background=\'var(--tag-bg)\'" onmouseout="this.style.background=\'\'">Zobacz pełny ranking →</a>';
+  document.getElementById('rankingImionPreview').innerHTML=html;
+})();
 
 </script>
 <div id="cookieBanner" style="display:none;position:fixed;bottom:0;left:0;right:0;z-index:9999;background:#1A1916;color:#F8F7F5;padding:1rem 1.5rem;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.75rem;font-family:Inter,sans-serif;font-size:.82rem;line-height:1.5;">
