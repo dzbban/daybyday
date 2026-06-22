@@ -374,11 +374,12 @@
     if (days < 0) { months--; days += new Date(now.getFullYear(), now.getMonth(), 0).getDate(); }
     if (months < 0) { years--; months += 12; }
     const totalDays = Math.floor((now - birth) / 86400000);
+    const totalWeeks = Math.floor(totalDays / 7);
     const totalHours = Math.floor((now - birth) / 3600000);
     const res = document.getElementById('ageResult');
     document.getElementById('ageYears').textContent = years;
     document.getElementById('ageDetail').innerHTML =
-      `${months} mies. ${days} dni<br><span style="font-size:.85em;opacity:.7">${totalDays.toLocaleString('pl-PL')} dni życia · ${totalHours.toLocaleString('pl-PL')} godzin</span>`;
+      `${months} mies. ${days} dni<br><span style="font-size:.85em;opacity:.7">${totalDays.toLocaleString('pl-PL')} dni · ${totalWeeks.toLocaleString('pl-PL')} tyg. · ${totalHours.toLocaleString('pl-PL')} godz.</span>`;
     res.style.display = 'block';
     res.classList.add('visible');
   }
