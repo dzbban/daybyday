@@ -466,7 +466,11 @@
       <div class="weather-details" id="weatherDetails"></div>
     </div>
     <div class="card">
-      <div class="card-title" id="miniCalTitle">Kalendarz miesiąca</div>
+      <div class="card-title" style="display:flex;align-items:center;justify-content:space-between;">
+        <button onclick="miniCalNav(-1)" style="background:none;border:none;cursor:pointer;color:var(--muted);font-size:1.1rem;padding:0 .3rem;line-height:1;" title="Poprzedni miesiąc">‹</button>
+        <span id="miniCalTitle">Kalendarz miesiąca</span>
+        <button onclick="miniCalNav(1)" style="background:none;border:none;cursor:pointer;color:var(--muted);font-size:1.1rem;padding:0 .3rem;line-height:1;" title="Następny miesiąc">›</button>
+      </div>
       <div id="miniCal"></div>
     </div>
     <div class="card">
@@ -3553,36 +3557,45 @@ function getMoonRiseSet(year,month,day,lat,lon){
   });
 
   // ── Mini-kalendarz ────────────────────────────────────────────
-  document.getElementById('miniCalTitle').textContent=`${MONTH_NOM[m]} ${y}`;
-  const calEl=document.getElementById('miniCal');
-  const grid=document.createElement('div');
-  grid.className='mini-cal';
-  ['Pn','Wt','Śr','Cz','Pt','Sb','Nd'].forEach((h,i)=>{
-    const s=document.createElement('span');s.className='mini-cal-hd'+(i===6?' sunday-hd':'');s.textContent=h;grid.appendChild(s);
-  });
-  const firstDay=new Date(y,m-1,1);
-  const startDow=(firstDay.getDay()+6)%7; // 0=Pn
-  const daysInMonth=new Date(y,m,0).getDate();
-  const holidaysThisMonthMap=HOLIDAYS.filter(([hd,hm])=>hm===m).reduce((acc,[hd,,name])=>{(acc[hd]=acc[hd]||[]).push(name);return acc;},{});
-  const holidaysThisMonth=new Set(Object.keys(holidaysThisMonthMap).map(Number));
   const todayD=TODAY.getDate(),todayM=TODAY.getMonth()+1,todayY=TODAY.getFullYear();
-  // padding
-  for(let i=0;i<startDow;i++){const s=document.createElement('span');s.className='mini-cal-day other-month';grid.appendChild(s);}
-  for(let dd=1;dd<=daysInMonth;dd++){
-    const a=document.createElement('a');
-    a.href=`index.html?d=${dd}&m=${m}&y=${y}`;
-    const isViewed=(dd===d);
-    const isRealToday=(dd===todayD&&m===todayM&&y===todayY);
-    let cls='mini-cal-day';
-    if(isViewed) cls+=' today';
-    if(isRealToday&&!isViewed) cls+=' real-today';
-    if(holidaysThisMonth.has(dd)){cls+=' has-holiday';a.title=holidaysThisMonthMap[dd].join('\n');}
-    if((startDow+dd-1)%7===6) cls+=' sunday';
-    a.className=cls;
-    a.textContent=dd;
-    grid.appendChild(a);
+  let miniM=m, miniY=y;
+  function renderMiniCal(cm,cy){
+    document.getElementById('miniCalTitle').textContent=`${MONTH_NOM[cm]} ${cy}`;
+    const calEl=document.getElementById('miniCal');
+    calEl.innerHTML='';
+    const grid=document.createElement('div');
+    grid.className='mini-cal';
+    ['Pn','Wt','Śr','Cz','Pt','Sb','Nd'].forEach((h,i)=>{
+      const s=document.createElement('span');s.className='mini-cal-hd'+(i===6?' sunday-hd':'');s.textContent=h;grid.appendChild(s);
+    });
+    const firstDay=new Date(cy,cm-1,1);
+    const startDow=(firstDay.getDay()+6)%7;
+    const daysInMonth=new Date(cy,cm,0).getDate();
+    const hmMap=HOLIDAYS.filter(([hd,hm])=>hm===cm).reduce((acc,[hd,,name])=>{(acc[hd]=acc[hd]||[]).push(name);return acc;},{});
+    const hmSet=new Set(Object.keys(hmMap).map(Number));
+    for(let i=0;i<startDow;i++){const s=document.createElement('span');s.className='mini-cal-day other-month';grid.appendChild(s);}
+    for(let dd=1;dd<=daysInMonth;dd++){
+      const a=document.createElement('a');
+      a.href=`index.html?d=${dd}&m=${cm}&y=${cy}`;
+      const isViewed=(dd===d&&cm===m&&cy===y);
+      const isRealToday=(dd===todayD&&cm===todayM&&cy===todayY);
+      let cls='mini-cal-day';
+      if(isViewed) cls+=' today';
+      if(isRealToday&&!isViewed) cls+=' real-today';
+      if(hmSet.has(dd)){cls+=' has-holiday';a.title=hmMap[dd].join('\n');}
+      if((startDow+dd-1)%7===6) cls+=' sunday';
+      a.className=cls;a.textContent=dd;
+      grid.appendChild(a);
+    }
+    calEl.appendChild(grid);
   }
-  calEl.appendChild(grid);
+  window.miniCalNav=function(dir){
+    miniM+=dir;
+    if(miniM>12){miniM=1;miniY++;}
+    if(miniM<1){miniM=12;miniY--;}
+    renderMiniCal(miniM,miniY);
+  };
+  renderMiniCal(miniM,miniY);
 
   // ── Najbliższe ważne daty ─────────────────────────────────────
   const PUBLIC_HOLIDAYS=[
