@@ -3685,7 +3685,8 @@ function getMoonRiseSet(year,month,day,lat,lon){
     row.href=slug?`swieto.html?id=${slug}`:`index.html?d=${d}&m=${m}&y=${y}`;
     const EMOJI={'Nowy Rok':'🎆','Trzech Króli':'⭐','Tłusty Czwartek':'🍩','Walentynki':'❤️','Dzień Kobiet':'🌷','Dzień Wiosny':'🌸','Wielkanoc':'🐣','Poniedziałek Wielkanocny':'🐣','Święto Pracy':'⚒️','Święto Konstytucji 3 Maja':'🇵🇱','Dzień Matki':'💐','Zielone Świątki':'🕊️','Dzień Dziecka':'🎈','Boże Ciało':'✝️','Przesilenie letnie':'☀️','Wniebowzięcie NMP':'🕊️','Wszyscy Świętych':'🕯️','Wszystkich Świętych':'🕯️','Halloween':'🎃','Dzień Niepodległości':'🇵🇱','Święto Niepodległości':'🇵🇱','Andrzejki':'🔮','Mikołajki':'🎅','Niepokalane Poczęcie NMP':'✝️','Przesilenie zimowe':'❄️','Wigilia':'🎄','Boże Narodzenie':'🎄','Drugi dzień Bożego Narodzenia':'🎄','Sylwester':'🎆','Dzień Ojca':'👨'};
     const em=EMOJI[name]||'📅';
-    row.innerHTML=`<span class="upcoming-name">${em} ${name}</span><span class="upcoming-meta">za ${diff} dni — ${d} ${MONTH_GEN[m]}</span>`;
+    const desc=EVENT_DESC[name]||'';
+    row.innerHTML=`<span class="upcoming-left"><span class="upcoming-name">${em} ${name}</span>${desc?`<span class="upcoming-desc">${desc}</span>`:''}</span><span class="upcoming-meta">za ${diff} dni — ${d} ${MONTH_GEN[m]}</span>`;
     ul.appendChild(row);
   });
 
