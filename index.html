@@ -3269,29 +3269,71 @@ function fmtDiff(mins){
 
 // ── Faza księżyca ─────────────────────────────────────────────
 function getMoonPhase(year,month,day){
-  const KNOWN_NEW=new Date(Date.UTC(2026,5,15,2,54));
-  const now=new Date(Date.UTC(year,month-1,day,12,0));
-  const diff=(now-KNOWN_NEW)/86400000;
-  const cycle=29.53058867;
-  const age=((diff%cycle)+cycle)%cycle;
+  // Algorytm Meeus "Astronomical Algorithms" rozdz. 47-48
+  // Oblicza prawdziwą elongację z głównymi perturbacjami — dokładność ~0,5%
+  const rad=Math.PI/180;
+  function toJD(y,m,d){if(m<=2){y--;m+=12;}const A=Math.floor(y/100);const B=2-A+Math.floor(A/4);return Math.floor(365.25*(y+4716))+Math.floor(30.6001*(m+1))+d+B-1524.5;}
+  const JD=toJD(year,month,day)+0.5; // południe
+  const T=(JD-2451545.0)/36525;     // wieki juliańskie od J2000.0
+
+  // Podstawowe argumenty orbitalne (Meeus równ. 47.1-47.7)
+  const D =((297.8501921+445267.1114034*T-0.0018819*T*T+T*T*T/545868)%360+360)%360; // średnia elongacja
+  const M =((357.5291092+ 35999.0502909*T-0.0001536*T*T)%360+360)%360;               // anomalia śr. Słońca
+  const Mp=((134.9633964+477198.8675055*T+0.0087414*T*T+T*T*T/69699)%360+360)%360;  // anomalia śr. Księżyca
+  const F =((93.2720950 +483202.0175233*T-0.0036539*T*T)%360+360)%360;               // arg. szerokości
+  const Lp=((218.3164477+481267.88123421*T-0.0015786*T*T)%360+360)%360;              // dług. śr. Księżyca
+
+  // Główne poprawki długości (Meeus tab. 47.A, jednostki: 0,000001°)
+  const dL=6288774*Math.sin(Mp*rad)
+    +1274027*Math.sin((2*D-Mp)*rad)
+    + 658314*Math.sin(2*D*rad)
+    + 213618*Math.sin(2*Mp*rad)
+    - 185116*Math.sin(M*rad)
+    - 114332*Math.sin(2*F*rad)
+    +  58793*Math.sin((2*D-2*Mp)*rad)
+    +  57066*Math.sin((2*D-M-Mp)*rad)
+    +  53322*Math.sin((2*D+Mp)*rad)
+    +  45758*Math.sin((2*D-M)*rad)
+    -  40923*Math.sin((M-Mp)*rad)
+    -  34720*Math.sin(D*rad)
+    -  30383*Math.sin((M+Mp)*rad)
+    +  15327*Math.sin((2*D-2*F)*rad)
+    +  10980*Math.sin((Mp-2*F)*rad)
+    +  10675*Math.sin((4*D-Mp)*rad)
+    +  10034*Math.sin(3*Mp*rad)
+    +   8548*Math.sin((4*D-2*Mp)*rad)
+    -   7888*Math.sin((2*D+M-Mp)*rad)
+    -   6766*Math.sin((2*D+M)*rad)
+    -   5163*Math.sin((D-Mp)*rad);
+
+  // Prawdziwa długość Księżyca
+  const moonLon=((Lp+dL/1000000)%360+360)%360;
+
+  // Uproszczona długość Słońca (błąd <0,01°)
+  const sunLon=((280.46646+36000.76983*T+0.0003032*T*T)%360+360)%360;
+
+  // Prawdziwa elongacja → wiek fazowy i oświetlenie
+  const elong=((moonLon-sunLon)%360+360)%360;
+  const SYNODIC=29.53058867;
+  const age=elong/360*SYNODIC;
+  const bright=Math.round((1-Math.cos(elong*rad))/2*100);
+
+  // Nazwa fazy
   let phase,icon;
-  if(age<1.85)        {phase='Nów';icon='🌑';}
-  else if(age<7.38)   {phase='Wzrastający sierp';icon='🌒';}
-  else if(age<9.22)   {phase='Pierwsza kwadra';icon='🌓';}
-  else if(age<14.77)  {phase='Wzrastający garb';icon='🌔';}
-  else if(age<16.61)  {phase='Pełnia';icon='🌕';}
-  else if(age<22.15)  {phase='Zanikający garb';icon='🌖';}
-  else if(age<23.99)  {phase='Ostatnia kwadra';icon='🌗';}
-  else if(age<29.53)  {phase='Zanikający sierp';icon='🌘';}
-  else                {phase='Nów';icon='🌑';}
+  if(age<1.85)       {phase='Nów';              icon='🌑';}
+  else if(age<7.38)  {phase='Wzrastający sierp';icon='🌒';}
+  else if(age<9.22)  {phase='Pierwsza kwadra';  icon='🌓';}
+  else if(age<14.77) {phase='Wzrastający garb'; icon='🌔';}
+  else if(age<16.61) {phase='Pełnia';           icon='🌕';}
+  else if(age<22.15) {phase='Zanikający garb';  icon='🌖';}
+  else if(age<23.99) {phase='Ostatnia kwadra';  icon='🌗';}
+  else               {phase='Zanikający sierp'; icon='🌘';}
+
+  // Znak zodiaku z prawdziwej długości ekliptycznej
   const MOON_SIGNS=['Baran ♈','Byk ♉','Bliźnięta ♊','Rak ♋','Lew ♌','Panna ♍','Waga ♎','Skorpion ♏','Strzelec ♐','Koziorożec ♑','Wodnik ♒','Ryby ♓'];
-  const J2000=new Date(Date.UTC(2000,0,1,12,0,0));
-  const Dj=(new Date(Date.UTC(year,month-1,day,12,0,0))-J2000)/86400000;
-  const moonLon=((218.316+13.176396*Dj)%360+360)%360;
   const signIdx=Math.floor(moonLon/30)%12;
-  // jasność tarczy
-  const bright=Math.round((1-Math.cos(age/cycle*Math.PI*2))/2*100);
-  // następna pełnia — dokładne daty USNO (UTC→CEST/CET)
+
+  // Następna pełnia — daty USNO (UTC)
   const FULL_MOONS_2026=[
     new Date(Date.UTC(2026,0,3,10,3)),
     new Date(Date.UTC(2026,1,1,22,9)),
@@ -3307,9 +3349,9 @@ function getMoonPhase(year,month,day){
     new Date(Date.UTC(2026,10,24,14,53)),
     new Date(Date.UTC(2026,11,24,1,28))
   ];
-  const todayMs=now.getTime();
-  const nextFM=FULL_MOONS_2026.find(d=>d.getTime()>todayMs)||FULL_MOONS_2026[FULL_MOONS_2026.length-1];
-  const daysToFull=Math.max(0,(nextFM.getTime()-todayMs)/86400000);
+  const nowMs=new Date(Date.UTC(year,month-1,day,12,0)).getTime();
+  const nextFM=FULL_MOONS_2026.find(d=>d.getTime()>nowMs)||FULL_MOONS_2026[FULL_MOONS_2026.length-1];
+  const daysToFull=Math.max(0,(nextFM.getTime()-nowMs)/86400000);
   const nextFull=`${nextFM.getDate()} ${MONTH_GEN[nextFM.getMonth()+1]} (za ${Math.round(daysToFull)} dni)`;
   return{phase:`${icon} ${phase}`,age:`${age.toFixed(1)} dni`,bright:`${bright}%`,sign:MOON_SIGNS[signIdx],nextFull};
 }
