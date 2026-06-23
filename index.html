@@ -38,25 +38,7 @@
     .nav-links { display: flex; gap: 0.25rem; list-style: none; }
     .nav-links a { font-size: 0.8rem; font-weight: 500; color: var(--muted); text-decoration: none; padding: 0.35rem 0.75rem; border-radius: 8px; transition: background 0.15s, color 0.15s; letter-spacing: 0.01em; }
     .nav-links a:hover, .nav-links a.active { background: var(--tag-bg); color: var(--text); }
-    .nav-month { font-size: 0.8rem; font-weight: 500; color: var(--muted); background: none; border: none; cursor: pointer; font-family: inherit; padding: 0.35rem 0.75rem; border-radius: 8px; transition: background 0.15s, color 0.15s; }
-    .nav-month:hover { background: var(--tag-bg); color: var(--text); }
-    #calOverlay { display: none; position: fixed; inset: 0; z-index: 200; }
-    #calOverlay.open { display: block; }
-    #calBackdrop { position: absolute; inset: 0; background: rgba(0,0,0,.25); }
-    #calPopup { position: absolute; top: 52px; right: 1.5rem; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.25rem; width: 280px; box-shadow: 0 8px 32px rgba(0,0,0,.12); }
-    #calPopup .cal-nav { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; }
-    #calPopup .cal-nav button { background: none; border: 1px solid var(--border); border-radius: 8px; padding: .25rem .6rem; cursor: pointer; font-size: .9rem; color: var(--muted); transition: background .15s; }
-    #calPopup .cal-nav button:hover { background: var(--tag-bg); }
-    #calPopup .cal-nav span { font-size: .875rem; font-weight: 600; color: var(--text); }
-    #calPopup .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; }
-    #calPopup .cal-hd { text-align: center; font-size: .7rem; font-weight: 600; color: var(--muted); padding: .3rem 0; }
-    #calPopup .cal-hd.sun { color: #C0392B; }
-    #calPopup .cal-cell { text-align: center; font-size: .8rem; border-radius: 6px; padding: .3rem 0; cursor: pointer; color: var(--text); transition: background .12s; text-decoration: none; display: block; }
-    #calPopup .cal-cell:hover { background: var(--tag-bg); }
-    #calPopup .cal-cell.today { background: var(--sun); color: #fff; font-weight: 600; }
-    #calPopup .cal-cell.sun { color: #C0392B; }
-    #calPopup .cal-cell.today.sun { color: #fff; }
-    #calPopup .cal-cell.empty { cursor: default; }
+    .nav-month { font-size: 0.8rem; font-weight: 500; color: var(--muted); font-family: inherit; padding: 0.35rem 0.75rem; }
     .page { max-width: 1120px; margin: 0 auto; padding: 2.5rem 2rem 6rem; display: grid; grid-template-columns: 1fr 320px; gap: 1.5rem; align-items: start; }
     @media (max-width: 768px) { .page { grid-template-columns: 1fr; } .nav-links { display: none; } }
     .date-hero { background: linear-gradient(135deg, #ffffff 60%, #FDF6EF 100%); border: 1px solid var(--border); border-radius: var(--radius); padding: 2.5rem; margin-bottom: 1.5rem; transition: box-shadow .2s, border-color .2s; box-shadow: 0 1px 3px rgba(26,25,22,.05), 0 4px 16px rgba(26,25,22,.05); }
@@ -237,7 +219,7 @@
     [data-theme="dark"] .quote-author { color: rgba(240,237,232,0.45); }
     [data-theme="dark"] .astro-icon.sun { background: #2D1F0F; }
     [data-theme="dark"] .astro-icon.moon { background: #141B24; }
-    [data-theme="dark"] #calPopup { box-shadow: 0 8px 32px rgba(0,0,0,.4); }
+
     [data-theme="dark"] .filter-btn:hover, [data-theme="dark"] .filter-btn.active { background: var(--text); color: var(--bg); border-color: var(--text); }
     [data-theme="dark"] .date-search input[type=date] { color-scheme: dark; }
     [data-theme="dark"] .calc-btn { color: var(--bg); }
@@ -293,23 +275,12 @@
     <li><a href="swieta.html">Święta</a></li>
     <li><a href="kalkulatory.html">Kalkulatory</a></li>
   </ul>
-  <button class="nav-month" id="navMonth" onclick="toggleCalOverlay()"></button>
+  <span class="nav-month" id="navMonth"></span>
     <button id="fontToggle" onclick="cycleFontSize()" title="Rozmiar tekstu" aria-label="Zmień rozmiar tekstu">A</button>
     <button id="themeToggle" onclick="toggleDarkMode()" title="Tryb ciemny/jasny" aria-label="Przełącz tryb ciemny/jasny"></button>
   <button class="nav-burger" id="navBurger" aria-label="Menu" onclick="var nl=document.querySelector('.topnav .nav-links');nl.classList.toggle('open');this.classList.toggle('open')"><span></span><span></span><span></span></button>
 </nav>
 
-<div id="calOverlay">
-  <div id="calBackdrop" onclick="closeCalOverlay()"></div>
-  <div id="calPopup">
-    <div class="cal-nav">
-      <button onclick="shiftCalMonth(-1)">←</button>
-      <span id="calTitle"></span>
-      <button onclick="shiftCalMonth(1)">→</button>
-    </div>
-    <div class="cal-grid" id="calGrid"></div>
-  </div>
-</div>
 
 <div class="page">
   <main>
@@ -3880,49 +3851,6 @@ function shareDay(){
 document.getElementById('locSearchInput')&&document.getElementById('locSearchInput').addEventListener('keydown',e=>{if(e.key==='Enter')applyLocSearch();});
 updateLocUI();
 
-// ── Overlay kalendarza z nav-month ────────────────────────────────────────
-let _calY=0,_calM=0;
-function toggleCalOverlay(){
-  const ov=document.getElementById('calOverlay');
-  if(ov.classList.contains('open')){closeCalOverlay();return;}
-  const T2=new Date();
-  _calY=parseInt(new URLSearchParams(location.search).get('y'))||T2.getFullYear();
-  _calM=parseInt(new URLSearchParams(location.search).get('m'))||T2.getMonth()+1;
-  renderCalPopup();
-  ov.classList.add('open');
-}
-function closeCalOverlay(){document.getElementById('calOverlay').classList.remove('open');}
-if(new URLSearchParams(location.search).get('cal')==='1'){toggleCalOverlay();}
-function shiftCalMonth(dir){
-  _calM+=dir;
-  if(_calM>12){_calM=1;_calY++;}
-  if(_calM<1){_calM=12;_calY--;}
-  renderCalPopup();
-}
-function renderCalPopup(){
-  const today=new Date();
-  document.getElementById('calTitle').textContent=MONTH_NOM[_calM]+' '+_calY;
-  const grid=document.getElementById('calGrid');
-  grid.innerHTML='';
-  const HDS=['Pn','Wt','Śr','Cz','Pt','Sb','Nd'];
-  HDS.forEach((h,i)=>{const d=document.createElement('div');d.className='cal-hd'+(i===6?' sun':'');d.textContent=h;grid.appendChild(d);});
-  const first=new Date(_calY,_calM-1,1).getDay();
-  const startDow=(first+6)%7;
-  const daysInMonth=new Date(_calY,_calM,0).getDate();
-  for(let i=0;i<startDow;i++){const e=document.createElement('div');e.className='cal-cell empty';grid.appendChild(e);}
-  for(let dd=1;dd<=daysInMonth;dd++){
-    const dow=(startDow+dd-1)%7;
-    const a=document.createElement('a');
-    a.className='cal-cell'+(dow===6?' sun':'');
-    a.textContent=dd;
-    const isToday=_calY===today.getFullYear()&&_calM===today.getMonth()+1&&dd===today.getDate();
-    if(isToday)a.classList.add('today');
-    a.href=`index.html?d=${dd}&m=${_calM}&y=${_calY}`;
-    a.onclick=()=>closeCalOverlay();
-    grid.appendChild(a);
-  }
-}
-document.addEventListener('keydown',e=>{if(e.key==='Escape')closeCalOverlay();});
 
 // ── Wyszukiwarka dat ──────────────────────────────────────────
 function jumpToDate(val){
