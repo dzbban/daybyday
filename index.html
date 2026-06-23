@@ -3672,16 +3672,18 @@ function getMoonRiseSet(year,month,day,lat,lon){
     'Sylwester':'Ostatni dzień roku — pożegnanie starego roku.',
     'Przesilenie zimowe':'Najkrótszy dzień roku — astronomiczny początek zimy.',
   };
-  // Dodaj dzisiejsze NAMED_DAYS do listy świąt
-  NAMED_DAYS.filter(([dd,mm])=>dd===d&&mm===m).forEach(([,,name])=>{
+  // Wstaw dzisiejsze NAMED_DAYS na górę listy świąt (wyróżnione)
+  const hlEl=document.getElementById('holidaysList');
+  const namedToday=NAMED_DAYS.filter(([dd,mm])=>dd===d&&mm===m);
+  namedToday.forEach(([,,name])=>{
     const slug=EVENT_SLUG[name];
     const el=document.createElement('a');
     el.href=slug?`swieto.html?id=${slug}`:`index.html?d=${d}&m=${m}&y=${y}`;
     el.className='holiday-item';
-    el.innerHTML=`<div class="holiday-dot" style="background:var(--sun)"></div><span class="holiday-name">${name}</span>`;
-    const hlEl=document.getElementById('holidaysList');
-    if(hlEl.querySelector('span')) hlEl.innerHTML=''; // usuń "brak świąt"
-    hlEl.appendChild(el);
+    el.style.cssText='font-weight:600;border-bottom:1px solid var(--border);padding-bottom:.5rem;margin-bottom:.25rem;';
+    const em=({'Tłusty Czwartek':'🍩','Walentynki':'❤️','Dzień Kobiet':'🌷','Dzień Wiosny':'🌸','Dzień Matki':'💐','Dzień Dziecka':'🎈','Dzień Ojca':'👨','Przesilenie letnie':'☀️','Halloween':'🎃','Andrzejki':'🔮','Mikołajki':'🎅','Przesilenie zimowe':'❄️','Wigilia':'🎄','Sylwester':'🎆'})[name]||'📅';
+    el.innerHTML=`<div class="holiday-dot" style="background:var(--sun)"></div><span class="holiday-name">${em} ${name}</span>`;
+    hlEl.insertBefore(el, hlEl.firstChild);
   });
   const TODAY_MS=new Date(y,m-1,d).getTime();
   const allUpcoming=[...PUBLIC_HOLIDAYS,...MOVABLE,...NAMED_DAYS].map(([dd,mm,name])=>{
@@ -3689,7 +3691,7 @@ function getMoonRiseSet(year,month,day,lat,lon){
     if(dt.getTime()<TODAY_MS)dt=new Date(y+1,mm-1,dd);
     const diff=Math.round((dt.getTime()-TODAY_MS)/86400000);
     return{name,dt,diff};
-  }).filter(x=>x.diff>=0).sort((a,b)=>a.diff-b.diff).slice(0,6);
+  }).filter(x=>x.diff>0).sort((a,b)=>a.diff-b.diff).slice(0,6);
 
   const ul=document.getElementById('upcomingList');
   allUpcoming.forEach(({name,dt,diff})=>{
