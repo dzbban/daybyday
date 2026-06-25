@@ -3567,7 +3567,8 @@ function getMoonRiseSet(year,month,day,lat,lon){
   document.getElementById('quoteAuthor').textContent='— '+q.a;
 
   // Przysłowia
-  const prov=[PROVERBS_ARR[(doy-1)%PROVERBS_ARR.length]];
+  const provKey=`${d}-${m}`;
+  const prov=PROVERBS&&PROVERBS[provKey]?PROVERBS[provKey]:[PROVERBS_ARR[(doy-1)%PROVERBS_ARR.length]];
   const firstName=names[0]||'';
   document.getElementById('proverbTitle').textContent='Przysłowia';
   const pl=document.getElementById('proverbList');
