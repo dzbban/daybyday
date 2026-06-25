@@ -556,7 +556,7 @@
     <li><a href="swieta.html">Święta</a></li>
     <li><a href="kalkulatory.html">Kalkulatory</a></li>
   </ul>
-  <a class="nav-month" id="navMonth" href="index.html?cal=1"></a>
+  
     <button id="fontToggle" onclick="cycleFontSize()" title="Rozmiar tekstu" aria-label="Zmień rozmiar tekstu">A</button>
     <button id="themeToggle" onclick="toggleDarkMode()" title="Tryb ciemny/jasny" aria-label="Przełącz tryb ciemny/jasny"></button>
   <button class="nav-burger" id="navBurger" aria-label="Menu" onclick="var nl=document.querySelector('.topnav .nav-links');nl.classList.toggle('open');this.classList.toggle('open')"><span></span><span></span><span></span></button>
@@ -1874,7 +1874,6 @@ function fullMonth(m){ return MONTH_LONG[m-1]; }
 })();
 
 // ── Nav month ─────────────────────────────────────────────
-document.getElementById('navMonth').textContent =
   `${fullMonth(T_MONTH)} ${TODAY.getFullYear()}`;
 
 // ── Render ────────────────────────────────────────────────
@@ -2185,6 +2184,7 @@ if (_q) {
 
 <script src="transitions.js"></script></body>
 </html>
+
 
 
 
