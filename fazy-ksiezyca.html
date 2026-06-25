@@ -32,6 +32,7 @@
     body { font-family:'Outfit',sans-serif; background:var(--bg); color:var(--text); -webkit-font-smoothing:antialiased; }
     .topnav { position:sticky; top:0; z-index:50; background:rgba(248,247,245,0.9); backdrop-filter:blur(12px); border-bottom:1px solid var(--border); padding:0 2rem; height:56px; display:flex; align-items:center; justify-content:space-between; }
     .nav-logo { font-family:'Instrument Serif',serif; font-size:1.25rem; color:var(--text); text-decoration:none; display: flex; align-items: center; gap: 0.5rem; }
+    [data-theme="dark"] .nav-logo svg { filter: invert(1); }
     .nav-links { display:flex; gap:.25rem; list-style:none; }
     .nav-links a { font-size:.8rem; font-weight:500; color:var(--muted); text-decoration:none; padding:.35rem .75rem; border-radius:8px; transition:background .15s,color .15s; }
     .nav-links a:hover,.nav-links a.active { background:var(--tag-bg); color:var(--text); }
@@ -819,6 +820,7 @@
 
 <script src="transitions.js"></script></body>
 </html>
+
 
 
 
