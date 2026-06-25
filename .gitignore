@@ -1,1 +1,5 @@
 ﻿node_modules/
+
+_seasonal.json
+fetch_wiki_rich.py
+names_rich_auto.json
