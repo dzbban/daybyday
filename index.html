@@ -2489,7 +2489,45 @@ const PROVERBS_DAILY = {
   '26-12':['Na świętego Szczepana każdy sobie pan.','Szczepan mroźny — Nowy Rok wesołny.'],
   '31-12':['Jak sylwester, taki cały nowy rok.','Co noc sylwestrowa przyniesie, to rok ze sobą niesie.'],
 };
-// Fallback miesięczny
+// Pula miesięczna — przysłowia pasujące do miesiąca (zbudowana z PROVERBS_DAILY)
+const PROVERBS_MONTH_POOL = (function(){
+  const pool = {};
+  Object.entries(PROVERBS_DAILY).forEach(([key, arr]) => {
+    const mo = parseInt(key.split('-')[1]);
+    if (!pool[mo]) pool[mo] = [];
+    arr.forEach(p => { if (!pool[mo].includes(p)) pool[mo].push(p); });
+  });
+  // Dodaj sezonowe z ogólnej puli
+  const extra = {
+    1: ['Jedna jaskółka wiosny nie czyni.','Pasuje jak kwiatek do kożucha.'],
+    2: ['Jedna jaskółka wiosny nie czyni.','Pasuje jak kwiatek do kożucha.'],
+    3: ['Jedna jaskółka wiosny nie czyni.','Konia kują, żaba nogę podstawia.','Czyj nasiew, tego plon.'],
+    4: ['Kwiecień plecień — bo przeplata trochę zimy, trochę lata.','Czyj nasiew, tego plon.','Kto sieje wiatr, ten zbiera burze.'],
+    5: ['Czyj nasiew, tego plon.','Kto sieje jarke tatarke i proso, to chodzi boso.','Siejesz wiatr – zbierasz burze.'],
+    6: ['Czyja kosa pierwsza, tego miedza szersza.','Na Alberta sianokosów pełna sterta.','Kto sieje wiatr, ten zbiera burze.'],
+    7: ['Czyja kosa pierwsza, tego miedza szersza.','Na Alberta sianokosów pełna sterta.'],
+    8: ['I kwaśne jabłko robak toczy.','Jakie jabłko, taka skórka, jaka matka, taka córka.','Czyja kosa pierwsza, tego miedza szersza.'],
+    9: ['I kwaśne jabłko robak toczy.','Jakie jabłko, taka skórka, jaka matka, taka córka.','Czyj nasiew, tego plon.'],
+    10:['I kwaśne jabłko robak toczy.','Pasuje jak kwiatek do kożucha.'],
+    11:['Pasuje jak kwiatek do kożucha.','Jedna jaskółka wiosny nie czyni.'],
+    12:['Pasuje jak kwiatek do kożucha.','Jedna jaskółka wiosny nie czyni.'],
+  };
+  Object.entries(extra).forEach(([mo, arr]) => {
+    arr.forEach(p => { if (!pool[mo].includes(p)) pool[mo].push(p); });
+  });
+  return pool;
+})();
+
+// Pora roku → miesiące
+function getSeason(m) {
+  if (m === 12 || m <= 2) return 'zima';
+  if (m <= 5) return 'wiosna';
+  if (m <= 8) return 'lato';
+  return 'jesien';
+}
+const SEASON_MONTHS = { zima:[12,1,2], wiosna:[3,4,5], lato:[6,7,8], jesien:[9,10,11] };
+
+// Fallback ogólny
 const PROVERBS_ARR=[
   '(My tu) Gadu gadu, (a) chłop śliwki rwie.',
   'Baba śląska: w barach szeroka, w dupie wąska.',
@@ -3458,9 +3496,22 @@ function getMoonRiseSet(year,month,day,lat,lon){
   document.getElementById('quoteText').textContent=q.t;
   document.getElementById('quoteAuthor').textContent='— '+q.a;
 
-  // Przysłowia
+  // Przysłowia — priorytet: dzień → miesiąc → pora roku → ogólna pula
   const provKey=`${d}-${m}`;
-  const prov=PROVERBS_DAILY&&PROVERBS_DAILY[provKey]?PROVERBS_DAILY[provKey]:[PROVERBS_ARR[(doy-1)%PROVERBS_ARR.length]];
+  let prov;
+  if (PROVERBS_DAILY[provKey]) {
+    prov = PROVERBS_DAILY[provKey];
+  } else {
+    const monthPool = PROVERBS_MONTH_POOL[m] || [];
+    const season = getSeason(m);
+    const seasonPool = SEASON_MONTHS[season].filter(sm=>sm!==m).flatMap(sm=>PROVERBS_MONTH_POOL[sm]||[]);
+    const combined = [...monthPool, ...seasonPool];
+    if (combined.length > 0) {
+      prov = [combined[(doy-1) % combined.length]];
+    } else {
+      prov = [PROVERBS_ARR[(doy-1) % PROVERBS_ARR.length]];
+    }
+  }
   const firstName=names[0]||'';
   document.getElementById('proverbTitle').textContent='Przysłowia';
   const pl=document.getElementById('proverbList');
