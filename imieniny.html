@@ -4869,14 +4869,16 @@ if (urlParam) {
 }
 buildAll();
 
-// Dynamiczny tytuł i opis dla SEO — na końcu żeby nie był nadpisany
+// Dynamiczny tytuł i opis dla SEO
 if (urlParam) {
   const nameCapitalized = urlParam.charAt(0).toUpperCase() + urlParam.slice(1).toLowerCase();
-  document.title = `Imieniny ${nameCapitalized} — kiedy są imieniny ${nameCapitalized}? | DaybyDay`;
-  const descMeta = document.querySelector('meta[name="description"]');
-  if (descMeta) descMeta.setAttribute('content', `Kiedy są imieniny ${nameCapitalized}? Sprawdź datę imienin, znaczenie imienia, historię i życzenia imieninowe dla ${nameCapitalized}.`);
-  const ogTitle = document.querySelector('meta[property="og:title"]');
-  if (ogTitle) ogTitle.setAttribute('content', `Imieniny ${nameCapitalized} | DaybyDay`);
+  setTimeout(function(){
+    document.title = `Imieniny ${nameCapitalized} — kiedy są imieniny ${nameCapitalized}? | DaybyDay`;
+    const descMeta = document.querySelector('meta[name="description"]');
+    if (descMeta) descMeta.setAttribute('content', `Kiedy są imieniny ${nameCapitalized}? Sprawdź datę imienin, znaczenie imienia, historię i życzenia imieninowe dla ${nameCapitalized}.`);
+    const ogTitle = document.querySelector('meta[property="og:title"]');
+    if (ogTitle) ogTitle.setAttribute('content', `Imieniny ${nameCapitalized} | DaybyDay`);
+  }, 100);
 }
 </script>
 <div id="cookieBanner" style="display:none;position:fixed;bottom:0;left:0;right:0;z-index:9999;background:#1A1916;color:#F8F7F5;padding:1rem 1.5rem;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.75rem;font-family:Inter,sans-serif;font-size:.82rem;line-height:1.5;">
