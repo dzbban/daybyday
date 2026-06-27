@@ -4577,59 +4577,23 @@ function jumpToDate(val){
     <div class="lw-meta">${dayLabels.join('<br>')}</div>`;
 })();
 
-// ── Urodzeni tego dnia (EN Wikipedia + Wikidata opisy PL) ─────
+// ── Urodzeni tego dnia (baza famous_poles.js) ─────────────────
 (function loadBirthdays(){
+  if(typeof FAMOUS_POLES==='undefined') return;
   const params=new URLSearchParams(location.search);
   const TODAY=new Date();
   const m=parseInt(params.get('m'))||TODAY.getMonth()+1;
   const d=parseInt(params.get('d'))||TODAY.getDate();
   const MONTHS_PL=['stycznia','lutego','marca','kwietnia','maja','czerwca','lipca','sierpnia','września','października','listopada','grudnia'];
-  const EN_MONTHS=['January','February','March','April','May','June','July','August','September','October','November','December'];
-  const pageName=`${EN_MONTHS[m-1]}_${d}`;
-
-  function stripWiki(t){
-    return t.replace(/\[\[(?:[^\]|]*\|)?([^\]]*)\]\]/g,'$1').replace(/'{2,3}/g,'').replace(/\{\{[^}]*\}\}/g,'').replace(/<[^>]+>/g,'').replace(/&[a-z]+;/g,'').replace(/\s+/g,' ').trim();
-  }
-
-  function parseBirths(wikitext){
-    return wikitext.split('\n').filter(l=>l.startsWith('*')).map(l=>{
-      const m2=l.match(/^\*\s*\[\[(\d{3,4})\]\]\s*[–&;ndash]*-?\s*\[\[([^\]|]+?)(?:\|([^\]]+))?\]\]\s*[,–]/);
-      if(!m2) return null;
-      return {year:parseInt(m2[1]), name:stripWiki(m2[3]||m2[2]), pageTitle:m2[2]};
-    }).filter(Boolean);
-  }
-
-  const base=`https://en.wikipedia.org/w/api.php?action=parse&page=${encodeURIComponent(pageName)}&prop=wikitext&format=json&origin=*`;
-  Promise.all([
-    fetch(base+'&section=8').then(r=>r.json()),
-    fetch(base+'&section=9').then(r=>r.json())
-  ]).then(([s8,s9])=>{
-    const births=[
-      ...parseBirths(s8?.parse?.wikitext?.['*']||''),
-      ...parseBirths(s9?.parse?.wikitext?.['*']||'')
-    ];
-    if(!births.length) return;
-    const titles=births.slice(0,50).map(p=>p.pageTitle).join('|');
-    const wdUrl=`https://www.wikidata.org/w/api.php?action=wbgetentities&sites=enwiki&titles=${encodeURIComponent(titles)}&props=descriptions|sitelinks&languages=pl&format=json&origin=*`;
-    fetch(wdUrl).then(r=>r.json()).then(wd=>{
-      const descMap={}, slMap={};
-      Object.values(wd.entities||{}).forEach(e=>{
-        const t=e.sitelinks?.enwiki?.title;
-        if(t){descMap[t]=e.descriptions?.pl?.value||''; slMap[t]=Object.keys(e.sitelinks||{}).length;}
-      });
-      const pool=births.filter(p=>(slMap[p.pageTitle]||0)>=50);
-      if(!pool.length) return;
-      const pick=[...pool].sort(()=>Math.random()-.5).slice(0,5);
-      pick.sort((a,b)=>a.year-b.year);
-      const html=pick.map(p=>{
-        const desc=descMap[p.pageTitle]||'';
-        return `<div class="history-item"><span class="history-year">${p.year} r.</span><span class="history-text"><strong>${p.name}</strong>${desc?' – '+desc:''}</span></div>`;
-      }).join('');
-      document.getElementById('birthdayList').innerHTML=html;
-      document.getElementById('birthdayTitle').textContent=`Urodzeni ${d} ${MONTHS_PL[m-1]}`;
-      document.getElementById('birthdayCard').style.display='';
-    }).catch(()=>{});
-  }).catch(()=>{});
+  const pool=FAMOUS_POLES.filter(p=>p.d===d&&p.m===m);
+  if(!pool.length) return;
+  pool.sort((a,b)=>a.year-b.year);
+  const html=pool.map(p=>
+    `<div class="history-item"><span class="history-year">${p.year} r.</span><span class="history-text"><strong>${p.name}</strong> – ${p.desc}</span></div>`
+  ).join('');
+  document.getElementById('birthdayList').innerHTML=html;
+  document.getElementById('birthdayTitle').textContent=`Urodzeni ${d} ${MONTHS_PL[m-1]}`;
+  document.getElementById('birthdayCard').style.display='';
 })();
 
 // ── Ten dzień w historii (Wikipedia PL) ──────────────────────
@@ -4840,6 +4804,7 @@ document.querySelector('main').addEventListener('pointerdown', onPointerDown);
 applyCardOrder();
 </script>
 
+<script src="famous_poles.js"></script>
 <script src="transitions.js"></script></body>
 </html>
 
