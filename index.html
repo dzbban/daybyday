@@ -4595,13 +4595,12 @@ function jumpToDate(val){
     return wikitext.split('\n')
       .filter(l=>l.startsWith('*'))
       .map(l=>{
-        const m2=l.match(/^\*\s*\[\[(\d{3,4})\]\]\s*[–&;a-z]*\s*\[\[([^\]|]+?)(?:\|([^\]]+))?\]\]\s*[,–]\s*(.+)/);
+        const m2=l.match(/^\*\s*\[\[(\d{3,4})\]\]\s*[–&;a-z]*\s*\[\[([^\]|]+?)(?:\|([^\]]+))?\]\]\s*[,–]/);
         if(!m2) return null;
         const year=parseInt(m2[1]);
+        const pageTitle=m2[2]; // tytuł artykułu EN Wiki (potrzebny do Wikidata)
         const name=m2[3]||m2[2];
-        const desc=stripWiki(m2[4]).replace(/\s*\(died[^)]+\)/,'').replace(/\s*\([^)]*\)\s*$/,'').trim();
-        if(!name||desc.length<5) return null;
-        return {year, name:stripWiki(name), desc};
+        return {year, name:stripWiki(name), pageTitle};
       })
       .filter(Boolean);
   }
@@ -4618,15 +4617,32 @@ function jumpToDate(val){
       ...parseBirths(s9?.parse?.wikitext?.['*']||'')
     ];
     if(!births.length) return;
-    // losuj 5, posortuj chronologicznie
     const pick=[...births].sort(()=>Math.random()-.5).slice(0,5);
     pick.sort((a,b)=>a.year-b.year);
-    const html=pick.map(p=>
-      `<div class="history-item"><span class="history-year">${p.year} r.</span><span class="history-text"><strong>${p.name}</strong> – ${p.desc}</span></div>`
-    ).join('');
-    document.getElementById('birthdayList').innerHTML=html;
-    document.getElementById('birthdayTitle').textContent=`Urodzeni ${d} ${MONTHS_PL[m-1]}`;
-    document.getElementById('birthdayCard').style.display='';
+
+    // pobierz polskie opisy z Wikidata — jeden request dla wszystkich
+    const titles=pick.map(p=>p.pageTitle).join('|');
+    const wdUrl=`https://www.wikidata.org/w/api.php?action=wbgetentities&sites=enwiki&titles=${encodeURIComponent(titles)}&props=descriptions&languages=pl&format=json&origin=*`;
+    fetch(wdUrl).then(r=>r.json()).then(wd=>{
+      // zbuduj mapę pageTitle → polski opis
+      const descMap={};
+      Object.values(wd.entities||{}).forEach(e=>{
+        if(e.sitelinks?.enwiki?.title) descMap[e.sitelinks.enwiki.title]=e.descriptions?.pl?.value||'';
+      });
+      const html=pick.map(p=>{
+        const desc=descMap[p.pageTitle]||'';
+        return `<div class="history-item"><span class="history-year">${p.year} r.</span><span class="history-text"><strong>${p.name}</strong>${desc?' – '+desc:''}</span></div>`;
+      }).join('');
+      document.getElementById('birthdayList').innerHTML=html;
+      document.getElementById('birthdayTitle').textContent=`Urodzeni ${d} ${MONTHS_PL[m-1]}`;
+      document.getElementById('birthdayCard').style.display='';
+    }).catch(()=>{
+      // fallback bez opisu
+      const html=pick.map(p=>`<div class="history-item"><span class="history-year">${p.year} r.</span><span class="history-text"><strong>${p.name}</strong></span></div>`).join('');
+      document.getElementById('birthdayList').innerHTML=html;
+      document.getElementById('birthdayTitle').textContent=`Urodzeni ${d} ${MONTHS_PL[m-1]}`;
+      document.getElementById('birthdayCard').style.display='';
+    });
   }).catch(()=>{});
 })();
 
