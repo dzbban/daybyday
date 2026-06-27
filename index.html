@@ -4621,9 +4621,10 @@ function jumpToDate(val){
           slMap[t]=Object.keys(e.sitelinks||{}).length;
         }
       });
-      // filtruj do powszechnie znanych (min. 15 wersji językowych)
-      const famous=births.filter(p=>(slMap[p.pageTitle]||0)>=15);
-      const pool=famous.length>=3 ? famous : births.filter(p=>(slMap[p.pageTitle]||0)>=5);
+      // filtruj: Polacy (opis zawiera "polsk") i powszechnie znani (min. 15 języków)
+      const polish=births.filter(p=>/polsk/i.test(descMap[p.pageTitle]||''));
+      const famous=polish.filter(p=>(slMap[p.pageTitle]||0)>=15);
+      const pool=famous.length>=2 ? famous : polish.filter(p=>(slMap[p.pageTitle]||0)>=5);
       const pick=[...pool].sort(()=>Math.random()-.5).slice(0,5);
       pick.sort((a,b)=>a.year-b.year);
       const html=pick.map(p=>{
