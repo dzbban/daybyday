@@ -4612,8 +4612,11 @@ function jumpToDate(val){
       ...parseSection(sec3?.parse?.wikitext?.['*']||'')
     ];
     if(!events.length) return;
-    // 4 losowe, posortowane chronologicznie
-    const pick=[...events].sort(()=>Math.random()-.5).slice(0,4);
+    // 4 deterministyczne — oparte na dacie (d*31+m jako seed)
+    const seed=(d*31+m);
+    const sorted=[...events].sort((a,b)=>a.year-b.year);
+    const step=Math.max(1,Math.floor(sorted.length/4));
+    const pick=[0,1,2,3].map(i=>sorted[Math.min((seed*7+i*step)%sorted.length,sorted.length-1)]);
     pick.sort((a,b)=>a.year-b.year);
     const html=pick.map(e=>
       `<div class="history-item"><span class="history-year">${e.year} r.</span><span class="history-text">${e.text}</span></div>`
