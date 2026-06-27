@@ -4616,14 +4616,17 @@ function jumpToDate(val){
     const titles=births.map(p=>p.pageTitle).join('|');
     const wdUrl=`https://www.wikidata.org/w/api.php?action=wbgetentities&sites=plwiki&titles=${encodeURIComponent(titles)}&props=descriptions|sitelinks&languages=pl&format=json&origin=*`;
     fetch(wdUrl).then(r=>r.json()).then(wd=>{
-      const descMap={};
+      const descMap={}, slMap={};
       Object.values(wd.entities||{}).forEach(e=>{
         const t=e.sitelinks?.plwiki?.title;
-        if(t) descMap[t]=e.descriptions?.pl?.value||'';
+        if(t){
+          descMap[t]=e.descriptions?.pl?.value||'';
+          slMap[t]=Object.keys(e.sitelinks||{}).length;
+        }
       });
-      // filtruj do Polaków
-      const polish=births.filter(p=>/polsk/i.test(descMap[p.pageTitle]||''));
-      const pool=polish.length>=3 ? polish : births; // fallback jeśli za mało Polaków
+      // filtruj do powszechnie znanych (min. 15 wersji językowych)
+      const famous=births.filter(p=>(slMap[p.pageTitle]||0)>=15);
+      const pool=famous.length>=3 ? famous : births.filter(p=>(slMap[p.pageTitle]||0)>=5);
       const pick=[...pool].sort(()=>Math.random()-.5).slice(0,5);
       pick.sort((a,b)=>a.year-b.year);
       const html=pick.map(p=>{
