@@ -4603,8 +4603,10 @@ function jumpToDate(val){
   }
 
   const base=`https://pl.wikipedia.org/w/api.php?action=parse&page=${encodeURIComponent(pageName)}&prop=wikitext&format=json&origin=*`;
+  console.log('birthday: start fetch', pageName);
   fetch(base+'&section=4').then(r=>r.json()).then(s4=>{
     const births=parseBirths(s4?.parse?.wikitext?.['*']||'');
+    console.log('birthday: births found', births.length);
     if(!births.length) return;
 
     // pobierz opisy z Wikidata (max 50 tytułów)
