@@ -421,13 +421,6 @@
       <div id="historyList"></div>
     </div>
 
-    <!-- URODZINY SŁAWNYCH -->
-    <div class="card" data-card-id="urodziny" id="birthdayCard" style="display:none">
-      <div class="drag-handle" title="Przeciągnij aby zmienić kolejność">⠿</div>
-      <div class="card-title" id="birthdayTitle">Urodzeni tego dnia</div>
-      <div id="birthdayList"></div>
-    </div>
-
     <!-- CYTAT DNIA -->
     <div class="quote-card" data-card-id="cytat">
       <div class="drag-handle drag-handle-light" title="Przeciągnij aby zmienić kolejność">⠿</div>
@@ -518,7 +511,6 @@
   <p class="footer-copy">&copy; 2026 daybyday.today</p>
 </footer>
 
-<script src="famous_poles.js"></script>
 <script>
 // ── Dane: imieniny ────────────────────────────────────────────
 const NAMES=
@@ -4578,24 +4570,6 @@ function jumpToDate(val){
     <div class="lw-meta">${dayLabels.join('<br>')}</div>`;
 })();
 
-// ── Urodzeni tego dnia (baza famous_poles.js) ─────────────────
-(function loadBirthdays(){
-  if(typeof FAMOUS_POLES==='undefined') return;
-  const params=new URLSearchParams(location.search);
-  const TODAY=new Date();
-  const m=parseInt(params.get('m'))||TODAY.getMonth()+1;
-  const d=parseInt(params.get('d'))||TODAY.getDate();
-  const MONTHS_PL=['stycznia','lutego','marca','kwietnia','maja','czerwca','lipca','sierpnia','września','października','listopada','grudnia'];
-  const pool=FAMOUS_POLES.filter(p=>p.d===d&&p.m===m);
-  if(!pool.length) return;
-  pool.sort((a,b)=>a.year-b.year);
-  const html=pool.map(p=>
-    `<div class="history-item"><span class="history-year">${p.year} r.</span><span class="history-text"><strong>${p.name}</strong> – ${p.desc}</span></div>`
-  ).join('');
-  document.getElementById('birthdayList').innerHTML=html;
-  document.getElementById('birthdayTitle').textContent=`Urodzeni ${d} ${MONTHS_PL[m-1]}`;
-  document.getElementById('birthdayCard').style.display='';
-})();
 
 // ── Ten dzień w historii (Wikipedia PL) ──────────────────────
 (function loadHistory(){
