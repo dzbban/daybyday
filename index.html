@@ -4577,66 +4577,57 @@ function jumpToDate(val){
     <div class="lw-meta">${dayLabels.join('<br>')}</div>`;
 })();
 
-// ── Urodzeni tego dnia (Wikidata — osoby znane globalnie) ─────
+// ── Urodzeni tego dnia (EN Wikipedia — globalnie znane osoby) ─
 (function loadBirthdays(){
   const params=new URLSearchParams(location.search);
   const TODAY=new Date();
   const m=parseInt(params.get('m'))||TODAY.getMonth()+1;
   const d=parseInt(params.get('d'))||TODAY.getDate();
   const MONTHS_PL=['stycznia','lutego','marca','kwietnia','maja','czerwca','lipca','sierpnia','września','października','listopada','grudnia'];
+  const EN_MONTHS=['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const pageName=`${EN_MONTHS[m-1]}_${d}`;
 
-  const mm=String(m).padStart(2,'0');
-  const dd=String(d).padStart(2,'0');
+  function stripWiki(t){
+    return t.replace(/\[\[(?:[^\]|]*\|)?([^\]]*)\]\]/g,'$1').replace(/'{2,3}/g,'').replace(/\{\{[^}]*\}\}/g,'').replace(/<[^>]+>/g,'').replace(/&ndash;/g,'–').replace(/&[a-z]+;/g,'').replace(/\s+/g,' ').trim();
+  }
 
-  // Wikidata SPARQL: osoby urodzone tego dnia z min. 40 wersjami językowymi (globalna sława)
-  const sparql=`
-SELECT ?person ?personLabel ?description ?sitelinks (YEAR(?dob) AS ?year) WHERE {
-  ?person wdt:P569 ?dob.
-  FILTER(MONTH(?dob)=${m} && DAY(?dob)=${d})
-  ?person wikibase:sitelinks ?sitelinks.
-  FILTER(?sitelinks >= 40)
-  OPTIONAL { ?person schema:description ?description. FILTER(LANG(?description)="pl") }
-  SERVICE wikibase:label { bd:serviceParam wikibase:language "pl,en". }
-}
-ORDER BY DESC(?sitelinks)
-LIMIT 20`;
+  function parseBirths(wikitext){
+    return wikitext.split('\n')
+      .filter(l=>l.startsWith('*'))
+      .map(l=>{
+        const m2=l.match(/^\*\s*\[\[(\d{3,4})\]\]\s*[–&;a-z]*\s*\[\[([^\]|]+?)(?:\|([^\]]+))?\]\]\s*[,–]\s*(.+)/);
+        if(!m2) return null;
+        const year=parseInt(m2[1]);
+        const name=m2[3]||m2[2];
+        const desc=stripWiki(m2[4]).replace(/\s*\(died[^)]+\)/,'').replace(/\s*\([^)]*\)\s*$/,'').trim();
+        if(!name||desc.length<5) return null;
+        return {year, name:stripWiki(name), desc};
+      })
+      .filter(Boolean);
+  }
 
-  const url='https://query.wikidata.org/sparql?format=json&query='+encodeURIComponent(sparql);
-
-  fetch(url,{headers:{'Accept':'application/sparql-results+json'}})
-    .then(r=>r.json())
-    .then(data=>{
-      const rows=data?.results?.bindings||[];
-      if(!rows.length) return;
-
-      // wyciągnij rok urodzenia z pełnej daty (może być kilka wpisów dla tej samej osoby — distinct po etykiecie)
-      const seen=new Set();
-      const people=[];
-      for(const r of rows){
-        const label=r.personLabel?.value||'';
-        if(!label||label.startsWith('Q')||seen.has(label)) continue;
-        seen.add(label);
-        const desc=r.description?.value||'';
-        const sitelinks=parseInt(r.sitelinks?.value||0);
-        const year=r.year?.value||'';
-        people.push({label, desc, sitelinks, year});
-        if(people.length>=10) break;
-      }
-      if(!people.length) return;
-
-      // weź top 5 (posortowane już po sitelinks malejąco)
-      const pick=people.slice(0,5);
-
-      // pobierz rok urodzenia z Wikidata labels — nie mamy go w SPARQL bez dodatkowego zapytania,
-      // więc pobierzmy go przez Wikipedia API (pl) dla każdej osoby lub pomiń rok
-      // Uproszczenie: wyświetl bez roku (opis wystarczy)
-      const html=pick.map(p=>
-        `<div class="history-item">${p.year?`<span class="history-year">${p.year} r.</span>`:''}<span class="history-text"><strong>${p.label}</strong>${p.desc?' – '+p.desc:''}</span></div>`
-      ).join('');
-      document.getElementById('birthdayList').innerHTML=html;
-      document.getElementById('birthdayTitle').textContent=`Urodzeni ${d} ${MONTHS_PL[m-1]}`;
-      document.getElementById('birthdayCard').style.display='';
-    }).catch(()=>{});
+  const base=`https://en.wikipedia.org/w/api.php?action=parse&page=${encodeURIComponent(pageName)}&prop=wikitext&format=json&origin=*`;
+  Promise.all([
+    fetch(base+'&section=7').then(r=>r.json()),
+    fetch(base+'&section=8').then(r=>r.json()),
+    fetch(base+'&section=9').then(r=>r.json())
+  ]).then(([s7,s8,s9])=>{
+    const births=[
+      ...parseBirths(s7?.parse?.wikitext?.['*']||''),
+      ...parseBirths(s8?.parse?.wikitext?.['*']||''),
+      ...parseBirths(s9?.parse?.wikitext?.['*']||'')
+    ];
+    if(!births.length) return;
+    // losuj 5, posortuj chronologicznie
+    const pick=[...births].sort(()=>Math.random()-.5).slice(0,5);
+    pick.sort((a,b)=>a.year-b.year);
+    const html=pick.map(p=>
+      `<div class="history-item"><span class="history-year">${p.year} r.</span><span class="history-text"><strong>${p.name}</strong> – ${p.desc}</span></div>`
+    ).join('');
+    document.getElementById('birthdayList').innerHTML=html;
+    document.getElementById('birthdayTitle').textContent=`Urodzeni ${d} ${MONTHS_PL[m-1]}`;
+    document.getElementById('birthdayCard').style.display='';
+  }).catch(()=>{});
 })();
 
 // ── Ten dzień w historii (Wikipedia PL) ──────────────────────
