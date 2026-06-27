@@ -105,7 +105,9 @@
     .mini-nav-list { display: flex; flex-direction: column; gap: 2px; }
     .mini-nav-link { display: flex; align-items: center; justify-content: space-between; padding: 0.6rem 0.75rem; border-radius: 10px; font-size: 0.82rem; color: var(--text); text-decoration: none; transition: background 0.15s; }
     .mini-nav-link:hover { background: var(--tag-bg); }
-    .mini-nav-link svg { width: 13px; height: 13px; stroke: var(--muted); }
+    .mini-nav-link svg { width: 13px; height: 13px; stroke: var(--muted); flex-shrink: 0; }
+    .mini-nav-label { display: flex; flex-direction: column; gap: 1px; }
+    .mini-nav-sub { font-size: 0.72rem; color: var(--muted); font-weight: 400; }
     .sidebar-section-title { font-size: 0.68rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); padding: 0 0.75rem; margin: 1.25rem 0 0.5rem; }
     .sidebar-section-title:first-child { margin-top: 0; }
     footer { border-top: 1px solid var(--border); padding: 2rem; max-width: 1120px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; }
@@ -463,30 +465,30 @@
     <div class="card">
       <div class="card-title">Kalendarze</div>
       <nav class="mini-nav-list">
-        <a href="swieta-nietypowe.html" class="mini-nav-link">Święta nietypowe<svg class="chevron-svg" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></a>
-        <a href="kalendarz.html" class="mini-nav-link">Kalendarze roczne 2026–2027<svg class="chevron-svg" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></a>
-        <a href="kalendarz-szkolny.html" class="mini-nav-link">Kalendarz szkolny<svg class="chevron-svg" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></a>
-        <a href="niedziele-handlowe.html" class="mini-nav-link">Niedziele handlowe<svg class="chevron-svg" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></a>
-        <a href="fazy-ksiezyca.html" class="mini-nav-link">Fazy księżyca<svg class="chevron-svg" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></a>
-        <a href="dni-plodne.html" class="mini-nav-link">Dni płodne<svg class="chevron-svg" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></a>
-        <a href="ferie-zimowe.html" class="mini-nav-link">Ferie zimowe<svg class="chevron-svg" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></a>
+        <a href="swieta-nietypowe.html" class="mini-nav-link"><span class="mini-nav-label">Święta nietypowe<span class="mini-nav-sub">Dni nieoczywiste i branżowe</span></span><svg class="chevron-svg" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></a>
+        <a href="kalendarz.html" class="mini-nav-link"><span class="mini-nav-label">Kalendarze roczne 2026–2027<span class="mini-nav-sub">Do druku i podglądu</span></span><svg class="chevron-svg" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></a>
+        <a href="kalendarz-szkolny.html" class="mini-nav-link"><span class="mini-nav-label">Kalendarz szkolny<span class="mini-nav-sub">Ferie, wakacje, przerwy</span></span><svg class="chevron-svg" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></a>
+        <a href="niedziele-handlowe.html" class="mini-nav-link"><span class="mini-nav-label">Niedziele handlowe<span class="mini-nav-sub">Kiedy sklepy są otwarte</span></span><svg class="chevron-svg" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></a>
+        <a href="fazy-ksiezyca.html" class="mini-nav-link"><span class="mini-nav-label">Fazy księżyca<span class="mini-nav-sub">Nów, pełnia i kwadry</span></span><svg class="chevron-svg" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></a>
+        <a href="dni-plodne.html" class="mini-nav-link"><span class="mini-nav-label">Dni płodne<span class="mini-nav-sub">Kalkulator cyklu i owulacji</span></span><svg class="chevron-svg" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></a>
+        <a href="ferie-zimowe.html" class="mini-nav-link"><span class="mini-nav-label">Ferie zimowe<span class="mini-nav-sub">Terminy dla wszystkich województw</span></span><svg class="chevron-svg" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></a>
 </nav>
     </div>
     <div class="card">
       <div class="card-title">Kalkulatory</div>
       <nav class="mini-nav-list">
-        <a href="kalkulatory.html" class="mini-nav-link">Kalkulator daty<svg class="chevron-svg" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></a>
-        <a href="kalkulator-dni.html" class="mini-nav-link">Kalkulator dni<svg class="chevron-svg" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></a>
-        <a href="kalkulator-wynagrodzen.html" class="mini-nav-link">Kalkulator wynagrodzeń<svg class="chevron-svg" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></a>
+        <a href="kalkulatory.html" class="mini-nav-link"><span class="mini-nav-label">Kalkulator daty<span class="mini-nav-sub">Ile dni między datami</span></span><svg class="chevron-svg" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></a>
+        <a href="kalkulator-dni.html" class="mini-nav-link"><span class="mini-nav-label">Kalkulator dni<span class="mini-nav-sub">Dodaj lub odejmij dni od daty</span></span><svg class="chevron-svg" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></a>
+        <a href="kalkulator-wynagrodzen.html" class="mini-nav-link"><span class="mini-nav-label">Kalkulator wynagrodzeń<span class="mini-nav-sub">Brutto, netto, ZUS</span></span><svg class="chevron-svg" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></a>
 </nav>
     </div>
     <div class="card">
       <div class="card-title">Więcej</div>
       <nav class="mini-nav-list">
-        <a href="imieniny.html" class="mini-nav-link">Imieniny<svg class="chevron-svg" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></a>
-        <a href="ranking-imion.html" class="mini-nav-link">Ranking imion<svg class="chevron-svg" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></a>
-        <a href="znaki-zodiaku.html" class="mini-nav-link">Znaki zodiaku<svg class="chevron-svg" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></a>
-        <a href="przyslowia.html" class="mini-nav-link">Przysłowia polskie<svg class="chevron-svg" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></a>
+        <a href="imieniny.html" class="mini-nav-link"><span class="mini-nav-label">Imieniny<span class="mini-nav-sub">Wyszukaj imię i jego daty</span></span><svg class="chevron-svg" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></a>
+        <a href="ranking-imion.html" class="mini-nav-link"><span class="mini-nav-label">Ranking imion<span class="mini-nav-sub">Najpopularniejsze imiona w Polsce</span></span><svg class="chevron-svg" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></a>
+        <a href="znaki-zodiaku.html" class="mini-nav-link"><span class="mini-nav-label">Znaki zodiaku<span class="mini-nav-sub">Daty, cechy i opisy znaków</span></span><svg class="chevron-svg" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></a>
+        <a href="przyslowia.html" class="mini-nav-link"><span class="mini-nav-label">Przysłowia polskie<span class="mini-nav-sub">Staropolskie mądrości na każdy dzień</span></span><svg class="chevron-svg" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></a>
         <a href="wschody-zachody.html" class="mini-nav-link">Wschody i zachody<svg class="chevron-svg" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></a>
 </nav>
     </div>
