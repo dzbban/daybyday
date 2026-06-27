@@ -4622,7 +4622,7 @@ function jumpToDate(val){
 
     // pobierz polskie opisy z Wikidata — jeden request dla wszystkich
     const titles=pick.map(p=>p.pageTitle).join('|');
-    const wdUrl=`https://www.wikidata.org/w/api.php?action=wbgetentities&sites=enwiki&titles=${encodeURIComponent(titles)}&props=descriptions&languages=pl&format=json&origin=*`;
+    const wdUrl=`https://www.wikidata.org/w/api.php?action=wbgetentities&sites=enwiki&titles=${encodeURIComponent(titles)}&props=descriptions|sitelinks&languages=pl&format=json&origin=*`;
     fetch(wdUrl).then(r=>r.json()).then(wd=>{
       // zbuduj mapę pageTitle → polski opis
       const descMap={};
