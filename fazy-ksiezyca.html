@@ -198,16 +198,19 @@
 
   <div class="moon-visual">
     <div class="moon-phase-display">
-      <div class="big-moon">🌑</div>
-      <div class="phase-label">Nów</div>
-      <div class="phase-sublabel">15 czerwca 2026 — 04:56 CEST</div>
+      <div class="big-moon" id="moonIcon">🌕</div>
+      <div class="phase-label" id="moonPhaseName">Ładowanie…</div>
+      <div class="phase-sublabel" id="moonPhaseDate"></div>
     </div>
-    <div class="moon-details">
-      <div class="moon-detail"><div class="moon-detail-num">2</div><div class="moon-detail-label">Dzień cyklu</div></div>
-      <div class="moon-detail"><div class="moon-detail-num">29,5</div><div class="moon-detail-label">Długość cyklu (dni)</div></div>
-      <div class="moon-detail"><div class="moon-detail-num">22 cze</div><div class="moon-detail-label">Pierwsza kwadra</div></div>
-      <div class="moon-detail"><div class="moon-detail-num">30 cze</div><div class="moon-detail-label">Najbliższa pełnia</div></div>
+    <div class="moon-details" id="moonDetails" style="grid-template-columns:repeat(3,1fr)">
+      <div class="moon-detail"><div class="moon-detail-num" id="mdIlum">—</div><div class="moon-detail-label">Oświetlenie</div></div>
+      <div class="moon-detail"><div class="moon-detail-num" id="mdAge">—</div><div class="moon-detail-label">Wiek księżyca</div></div>
+      <div class="moon-detail"><div class="moon-detail-num" id="mdRise">—</div><div class="moon-detail-label">Wschód 🌙</div></div>
+      <div class="moon-detail"><div class="moon-detail-num" id="mdTransit">—</div><div class="moon-detail-label">Kulminacja</div></div>
+      <div class="moon-detail"><div class="moon-detail-num" id="mdSet">—</div><div class="moon-detail-label">Zachód 🌙</div></div>
+      <div class="moon-detail"><div class="moon-detail-num" id="mdNext">—</div><div class="moon-detail-label" id="mdNextLabel">Następna faza</div></div>
     </div>
+    <div style="font-size:.7rem;color:var(--muted);text-align:center;margin-top:.5rem;cursor:pointer" id="moonLoc" onclick="askGeo()">📍 <span id="moonLocLabel">Warszawa</span> — kliknij aby użyć swojej lokalizacji</div>
   </div>
 
   <div class="phase-legend">
@@ -819,6 +822,136 @@
   })();
 </script>
 
+<script>
+(function() {
+  const DEG = Math.PI / 180, RAD = 180 / Math.PI;
+  const NEW_MOONS = [
+    new Date('2025-12-20T05:43:00Z'), new Date('2026-01-18T19:52:00Z'),
+    new Date('2026-02-17T12:01:00Z'), new Date('2026-03-19T01:23:00Z'),
+    new Date('2026-04-17T11:52:00Z'), new Date('2026-05-16T20:01:00Z'),
+    new Date('2026-06-15T02:54:00Z'), new Date('2026-07-14T09:43:00Z'),
+    new Date('2026-08-12T17:37:00Z'), new Date('2026-09-11T03:27:00Z'),
+    new Date('2026-10-10T16:50:00Z'), new Date('2026-11-09T10:02:00Z'),
+    new Date('2026-12-09T04:52:00Z'),
+  ];
+  const PHASE_EVENTS = [
+    {date:new Date('2026-06-21T21:55:00Z'),icon:'🌓',name:'Pierwsza kwadra'},
+    {date:new Date('2026-06-29T23:58:00Z'),icon:'🌕',name:'Pełnia'},
+    {date:new Date('2026-07-07T19:29:00Z'),icon:'🌗',name:'Ostatnia kwadra'},
+    {date:new Date('2026-07-14T09:43:00Z'),icon:'🌑',name:'Nów'},
+    {date:new Date('2026-07-21T11:05:00Z'),icon:'🌓',name:'Pierwsza kwadra'},
+    {date:new Date('2026-07-29T14:36:00Z'),icon:'🌕',name:'Pełnia'},
+    {date:new Date('2026-08-06T02:21:00Z'),icon:'🌗',name:'Ostatnia kwadra'},
+    {date:new Date('2026-08-12T17:37:00Z'),icon:'🌑',name:'Nów'},
+    {date:new Date('2026-08-20T02:46:00Z'),icon:'🌓',name:'Pierwsza kwadra'},
+    {date:new Date('2026-08-28T04:18:00Z'),icon:'🌕',name:'Pełnia'},
+    {date:new Date('2026-09-04T07:51:00Z'),icon:'🌗',name:'Ostatnia kwadra'},
+    {date:new Date('2026-09-11T03:27:00Z'),icon:'🌑',name:'Nów'},
+    {date:new Date('2026-09-19T01:45:00Z'),icon:'🌓',name:'Pierwsza kwadra'},
+    {date:new Date('2026-09-26T17:49:00Z'),icon:'🌕',name:'Pełnia'},
+  ];
+  const PL_MON = ['stycznia','lutego','marca','kwietnia','maja','czerwca','lipca','sierpnia','września','października','listopada','grudnia'];
+  const PL_MON_SHORT = ['sty','lut','mar','kwi','maj','cze','lip','sie','wrz','paź','lis','gru'];
+
+  function jd(d) { return d.getTime()/86400000 + 2440587.5; }
+
+  function moonPos(jde) {
+    const T=(jde-2451545)/36525;
+    const L=((218.3164477+481267.88123421*T-0.0015786*T*T)%360+360)%360;
+    const M=((134.9633964+477198.8675055*T+0.0087414*T*T)%360+360)%360;
+    const Ms=((357.5291092+35999.0502909*T)%360+360)%360;
+    const F=((93.2720950+483202.0175233*T-0.0036539*T*T)%360+360)%360;
+    const D=((297.8501921+445267.1114034*T-0.0018819*T*T)%360+360)%360;
+    const dL=6288774*Math.sin(M*DEG)+1274027*Math.sin((2*D-M)*DEG)+658314*Math.sin(2*D*DEG)
+            +213618*Math.sin(2*M*DEG)-185116*Math.sin(Ms*DEG)-114332*Math.sin(2*F*DEG)
+            +58793*Math.sin((2*D-2*M)*DEG)+57066*Math.sin((2*D-Ms-M)*DEG)
+            +53322*Math.sin((2*D+M)*DEG)+45758*Math.sin((2*D-Ms)*DEG);
+    const dB=5128122*Math.sin(F*DEG)+280602*Math.sin((M+F)*DEG)+277693*Math.sin((M-F)*DEG)
+            +173237*Math.sin((2*D-F)*DEG)+55413*Math.sin((2*D-M+F)*DEG)+46271*Math.sin((2*D-M-F)*DEG);
+    return {lon:((L+dL/1000000)%360+360)%360, lat:dB/1000000};
+  }
+
+  function toEq(lon,lat,T) {
+    const eps=(23.439291111-0.013004167*T)*DEG, l=lon*DEG, b=lat*DEG;
+    const ra=(Math.atan2(Math.sin(l)*Math.cos(eps)-Math.tan(b)*Math.sin(eps),Math.cos(l))*RAD+360)%360;
+    const dec=Math.asin(Math.sin(b)*Math.cos(eps)+Math.cos(b)*Math.sin(eps)*Math.sin(l))*RAD;
+    return {ra,dec};
+  }
+
+  function fmt(h) {
+    h=((h%24)+24)%24;
+    return String(Math.floor(h)).padStart(2,'0')+':'+String(Math.round((h%1)*60)).padStart(2,'0');
+  }
+
+  function moonRiseSet(date, lat, lon) {
+    const jd0=Math.floor(jd(new Date(Date.UTC(date.getFullYear(),date.getMonth(),date.getDate()))))+0.5;
+    const T=(jd0-2451545)/36525;
+    const pos=[-1,0,1].map(i=>{const p=moonPos(jd0+i);return toEq(p.lon,p.lat,T+i/36525);});
+    const th0=((280.46061837+360.98564736629*(jd0-2451545)+0.000387933*T*T)%360+360)%360;
+    const phi=lat*DEG, h0=0.125*DEG;
+    const cosH=(Math.sin(h0)-Math.sin(phi)*Math.sin(pos[1].dec*DEG))/(Math.cos(phi)*Math.cos(pos[1].dec*DEG));
+    if(Math.abs(cosH)>1) return null;
+    const H0=Math.acos(cosH)*RAD;
+    const norm=m=>((m%1)+1)%1;
+    const m0=norm((pos[1].ra-lon-th0)/360);
+    return {rise:norm(m0-H0/360)*24, transit:m0*24, set:norm(m0+H0/360)*24};
+  }
+
+  function getMoonAge(now) {
+    for(let i=NEW_MOONS.length-1;i>=0;i--) if(now>=NEW_MOONS[i]) return (now-NEW_MOONS[i])/86400000;
+    return 0;
+  }
+
+  function getPhase(age) {
+    if(age<1.5) return {icon:'🌑',name:'Nów'};
+    if(age<6.5) return {icon:'🌒',name:'Sierp rosnący'};
+    if(age<8.5) return {icon:'🌓',name:'Pierwsza kwadra'};
+    if(age<13)  return {icon:'🌔',name:'Księżyc rosnący'};
+    if(age<16.5)return {icon:'🌕',name:'Pełnia'};
+    if(age<21)  return {icon:'🌖',name:'Księżyc malejący'};
+    if(age<23.5)return {icon:'🌗',name:'Ostatnia kwadra'};
+    if(age<28)  return {icon:'🌘',name:'Sierp malejący'};
+    return {icon:'🌑',name:'Nów'};
+  }
+
+  function getNext(now) {
+    for(const e of PHASE_EVENTS) {
+      if(e.date>now) {
+        const days=Math.ceil((e.date-now)/86400000);
+        const d=e.date, label=d.getDate()+' '+PL_MON_SHORT[d.getMonth()];
+        return {num:e.icon+' '+label, sub:e.name+' (za '+days+' dni)'};
+      }
+    }
+    return null;
+  }
+
+  function render(lat, lon, locName) {
+    const now=new Date();
+    const age=getMoonAge(now);
+    const ilum=Math.round((1-Math.cos(age/29.53059*2*Math.PI))/2*100);
+    const phase=getPhase(age);
+    const rs=moonRiseSet(now,lat,lon);
+    const next=getNext(now);
+    document.getElementById('moonIcon').textContent=phase.icon;
+    document.getElementById('moonPhaseName').textContent=phase.name;
+    document.getElementById('moonPhaseDate').textContent=now.getDate()+' '+PL_MON[now.getMonth()]+' '+now.getFullYear();
+    document.getElementById('mdIlum').textContent=ilum+'%';
+    document.getElementById('mdAge').textContent=Math.floor(age)+' dni';
+    document.getElementById('mdRise').textContent=rs?fmt(rs.rise):'—';
+    document.getElementById('mdTransit').textContent=rs?fmt(rs.transit):'—';
+    document.getElementById('mdSet').textContent=rs?fmt(rs.set):'—';
+    if(next){document.getElementById('mdNext').textContent=next.num;document.getElementById('mdNextLabel').textContent=next.sub;}
+    document.getElementById('moonLocLabel').textContent=locName;
+  }
+
+  window.askGeo=function(){
+    if(!navigator.geolocation) return;
+    navigator.geolocation.getCurrentPosition(p=>render(p.coords.latitude,p.coords.longitude,'Twoja lokalizacja'),()=>{});
+  };
+
+  render(52.23, 21.01, 'Warszawa');
+})();
+</script>
 <script src="transitions.js"></script></body>
 </html>
 
