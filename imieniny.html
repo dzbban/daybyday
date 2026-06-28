@@ -707,6 +707,8 @@ const NAME_PRIMARY_DAY = {
   'Danuta':[24,6],
 };
 
+function nameSlug(n) { return n.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/ł/g,'l').replace(/[^a-z0-9-]/g,''); }
+
 // ── Hero "Dzisiaj / wybrany dzień" ───────────────────────────
 (function renderTodayHero(){
   const DAY_NOM=['Niedziela','Poniedziałek','Wtorek','Środa','Czwartek','Piątek','Sobota'];
@@ -737,7 +739,6 @@ const NAME_PRIMARY_DAY = {
     .filter(n=>{ const p=NAME_PRIMARY_DAY[n]; return p&&(p[0]!==hD||p[1]!==hM); })
     .sort((a,b)=>(NAME_POPULARITY[b]||0)-(NAME_POPULARITY[a]||0));
 
-  function nameSlug(n) { return n.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/ł/g,'l').replace(/[^a-z0-9-]/g,''); }
   const mkLink = (n, cls) => `<a class="${cls}" href="/imieniny/${nameSlug(n)}/">${n}</a>`;
   const primaryHtml = primary.map(n=>mkLink(n,'hero-name-primary')).join(', ');
   const secondaryHtml = secondary.length
