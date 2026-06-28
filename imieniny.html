@@ -4822,6 +4822,8 @@ const urlParam = new URLSearchParams(window.location.search).get('name');
 if (urlParam) {
   searchInput.value = urlParam;
   doSearch(urlParam);
+  const friendlySlug = urlParam.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/ł/g,'l').replace(/[^a-z0-9-]/g,'');
+  if (friendlySlug) history.replaceState(null, '', '/imieniny/' + friendlySlug + '/');
 }
 
 buildAll();
