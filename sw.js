@@ -1,4 +1,4 @@
-﻿const CACHE = 'daybyday-v36';
+﻿const CACHE = 'daybyday-v37';
 
 const PRECACHE = [
   'fonts.css',
