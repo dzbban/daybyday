@@ -4828,9 +4828,14 @@ function doSearch(val) {
   let alsoText = '';
   if (others.length) alsoText += `<strong>Tego dnia świętują też:</strong> ${others.join(', ')}`;
 
-  // All dates as readable text
+  // All dates as readable text with links to kartka-z-kalendarza
   const allDatesSorted = [...found].sort((a,b) => a.m!==b.m ? a.m-b.m : a.d-b.d);
-  const datesList = allDatesSorted.map(e => `${e.d} ${MONTH_NAMES_GEN[e.m]}`).join(', ');
+  const today = new Date(); const ty = today.getFullYear();
+  const datesList = allDatesSorted.map(e => {
+    const dd = String(e.d).padStart(2,'0'), mm = String(e.m).padStart(2,'0');
+    const yr = (e.m > today.getMonth()+1 || (e.m===today.getMonth()+1 && e.d>=today.getDate())) ? ty : ty+1;
+    return `<a href="/kartka-z-kalendarza.html?date=${yr}-${mm}-${dd}" style="color:inherit;text-decoration:underline;text-underline-offset:3px">${e.d} ${MONTH_NAMES_GEN[e.m]}</a>`;
+  }).join(', ');
 
   body.innerHTML = `
     <div style="padding:.25rem 0">
