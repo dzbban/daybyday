@@ -26,7 +26,8 @@ body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif;min-
 body.page-out{animation:pageOut .22s ease forwards}
 @keyframes pageOut{to{opacity:0;transform:translateY(-5px)}}
 nav{background:var(--card);border-bottom:1px solid var(--border);padding:.75rem 1.25rem;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
-.nav-logo{font-family:'Instrument Serif',serif;font-size:1.25rem;text-decoration:none;color:var(--text)}
+.nav-logo{font-family:'Instrument Serif',serif;font-size:1.25rem;text-decoration:none;color:var(--text);display:flex;align-items:center;gap:.5rem}
+  [data-theme="dark"] .nav-logo svg{filter:invert(1)}
 .nav-links{display:flex;gap:.5rem;align-items:center;flex-wrap:wrap}
 .nav-links a{font-size:.8rem;color:var(--muted);text-decoration:none;padding:.35rem .75rem;border-radius:60px;transition:background .15s}
 .nav-links a:hover,.nav-links a.active{background:var(--tag-bg);color:var(--text)}
@@ -66,7 +67,7 @@ footer a:hover{color:var(--text)}
 </head>
 <body>
 <nav>
-  <a class="nav-logo" href="index.html">DaybyDay</a>
+  <a class="nav-logo" href="index.html"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="26" height="26" style="flex-shrink:0;"><rect width="32" height="32" rx="8" fill="#1A1916"/><text x="16" y="23" font-family="Georgia,serif" font-size="20" fill="#F8F7F5" text-anchor="middle">D</text></svg>DaybyDay</a>
   <div class="nav-links">
     <a href="index.html">Dziś</a>
     <a href="kalendarz.html">Kalendarz</a>
