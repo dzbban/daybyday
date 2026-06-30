@@ -167,6 +167,7 @@
       <div class="today-info-label">Dzisiaj</div>
       <div class="today-name" id="todayName">Ładowanie…</div>
       <div class="today-color" id="todayColor"></div>
+      <div class="today-date" id="todayWeek"></div>
       <div class="today-date" id="todayDate"></div>
     </div>
   </div>
@@ -326,6 +327,20 @@
       }
     }
 
+    // numeracja tygodni okresu zwykłego
+    let weekLabel=null;
+    const mondayOrdinary1=addDays(baptismOfLord,1);
+    if(active===seasons[2]){
+      const wn=Math.floor((today-mondayOrdinary1)/(7*86400000))+1;
+      weekLabel=wn+'. tydzień okresu zwykłego';
+    } else if(active===seasons[6]){
+      const mondayAfterPentecost=addDays(pentecost,1);
+      const totalWeeksPart2=Math.round((christKingDate-mondayAfterPentecost)/(7*86400000))+1;
+      const weekIndexFromStart=Math.floor((today-mondayAfterPentecost)/(7*86400000));
+      const wn=34-totalWeeksPart2+1+weekIndexFromStart;
+      weekLabel=wn+'. tydzień okresu zwykłego';
+    }
+
     const fixed=[
       {date:new Date(christmasThisLitYear.getFullYear(),11,8), name:'Niepokalane Poczęcie NMP', color:'white', rank:'Uroczystość'},
       {date:christmasThisLitYear, name:'Boże Narodzenie', color:'white', rank:'Uroczystość'},
@@ -350,7 +365,7 @@
       {date:christKingDate, name:'Jezusa Chrystusa Króla Wszechświata', color:'white', rank:'Uroczystość — koniec roku liturgicznego'},
     ].sort((a,b)=>a.date-b.date);
 
-    return {seasons, active, todayName, todayColor, fixed, today, ashWednesday, goodFriday};
+    return {seasons, active, todayName, todayColor, fixed, today, ashWednesday, goodFriday, weekLabel};
   }
 
   function render(){
@@ -364,6 +379,7 @@
     document.getElementById('todayName').textContent=data.todayName;
     document.getElementById('todayColor').textContent='Kolor liturgiczny: '+c.label;
     document.getElementById('todayDate').textContent=fmtDate(today);
+    document.getElementById('todayWeek').textContent=data.weekLabel||'';
 
     const seasonList=document.getElementById('seasonList');
     seasonList.innerHTML=data.seasons.map(s=>{
